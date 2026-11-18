@@ -14,6 +14,8 @@ The starter implementation includes a working Hugging Face reference path, a sin
 
 When work needs another slice's input, use the [work-slice index](docs/specs/README.md) to identify the slice and recommend that the user contact the teammate who owns it. Give them a short, ready-to-send message with the proposed change, what it affects, and the specific input you need. For example, “Hey, I’m changing how the driver passes the valid cache length to attention. Can you confirm the new argument works for your kernel before I update the interface?”
 
+Keep existing code paths usable for their callers while coordinating a change. If the shared interface is ambiguous, flag the assumption in the message and continue with the files and contracts already available. Treat a teammate's response as a blocker only when no meaningful work can proceed without it.
+
 ## Setup and verification
 
 Use the Python 3.12 environment defined by [`pyproject.toml`](pyproject.toml) and [`uv.lock`](uv.lock). Follow the [environment guide](docs/setup/ENVIRONMENT.md) for Linux, Windows through WSL2, Apple Silicon and Euler. Keep the Transformers pin compatible with the Fast-dLLM remote model code and keep `einops`, which that code imports. The CUDA wheel supplies the runtime. Building the extension also needs a CUDA toolkit with `nvcc` and the correct `CUDA_HOME`.
