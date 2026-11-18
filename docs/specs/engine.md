@@ -1,4 +1,4 @@
-# Slice: Engine (lead)
+# Slice: Engine (lead: Sparsh)
 
 **ECE 759 Final Project · Work slice spec**
 Milestones: M0 Thu 11/19 · M1 Sun 11/22 · M2 Sun 11/29 · M3 Wed 12/2 · slides 12/3 · report section 12/6

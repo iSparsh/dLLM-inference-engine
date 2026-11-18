@@ -1,6 +1,6 @@
 # Work Slices
 
-The project is split into four slices. Each slice is written like a course assignment: background, numbered problems, exact commands, and what to hand in by each milestone. Pick the slice that fits your hardware and interests; the lead takes the Engine slice because it is the critical path and touches everything else.
+The project is split into four slices. Each slice is written like a course assignment: background, numbered problems, exact commands, and what to hand in by each milestone. Pick the slice that fits your hardware and interests; the lead (Sparsh) takes the Engine slice because it is the critical path and touches everything else.
 
 Read [GUIDE.md](../GUIDE.md) first, then [INTERFACES.md](../INTERFACES.md) (the contracts every slice codes against), then your slice. Set up your machine with [setup/ENVIRONMENT.md](../setup/ENVIRONMENT.md).
 
@@ -8,7 +8,7 @@ Read [GUIDE.md](../GUIDE.md) first, then [INTERFACES.md](../INTERFACES.md) (the 
 
 | Slice | What you build | Hardware you need | LLM knowledge | Difficulty |
 |---|---|---|---|---|
-| [**Engine**](engine.md) (lead) | The driver: decode loop, static KV cache, CUDA Graph, AR mode; integrating every kernel; P1–P3; the final benchmark grid | Local NVIDIA GPU | Deep | Hard, wide |
+| [**Engine**](engine.md) (lead: **Sparsh**) | The driver: decode loop, static KV cache, CUDA Graph, AR mode; integrating every kernel; P1–P3; the final benchmark grid | Local NVIDIA GPU | Deep | Hard, wide |
 | [**Attention path**](attention.md) | K2 block-causal attention and the RoPE + KV-cache-write kernel | Any NVIDIA GPU, or Euler | Some (explained in the spec) | Hard, deep |
 | [**Selection and fused ops**](selection.md) | K1 parallel selection, the add + RMSNorm and SiLU × mul kernels, and the cross-GPU baselines | Any NVIDIA GPU, or Euler; an NVIDIA GPU of your own for the baselines | Little | Medium, several pieces |
 | [**Accuracy and decoding analysis**](accuracy.md) | The GSM8K harness and threshold sweep on Euler, the P2/P3 hit-rate analysis, the P4 commit rules | Euler only (macOS or any laptop is fine) | Some | Medium, analysis-heavy |

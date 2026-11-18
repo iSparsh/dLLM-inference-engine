@@ -43,3 +43,6 @@ docs/*.pptx
 .idea/
 .DS_Store
 mac-env-report-*.txt
+
+# Private team notes (not published)
+docs/internal/
