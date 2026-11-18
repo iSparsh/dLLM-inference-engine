@@ -31,7 +31,7 @@ Inside each layer, two kinds of work happen:
 
 Here is the key fact for the whole project. **Every forward pass has to read all 3 GB of weights from GPU memory.** The RTX 4060 Laptop reads memory at about 256 GB/s, so one pass can never take less than about **12 ms**, no matter how fast the arithmetic is.
 
-When you generate one token per pass, the arithmetic is tiny compared with that 3 GB read, so the GPU's math units sit idle most of the time. The GPU is **memory-bound**. That caps a normal model at about 75–80 tokens per second on this laptop. llama.cpp, the best engine there is for this, reaches 64.6.
+When you generate one token per pass, the arithmetic is tiny compared with that 3 GB read, so the GPU's math units sit idle most of the time. The GPU is **memory-bound**. That caps a normal model at about 75–80 tokens per second on this laptop. llama.cpp, the best engine there is for this, reaches 76: about 97% of the limit.
 
 We measured what happens if you push more tokens through one pass. Processing 32 tokens takes 1.06× as long as processing 1. Processing 64 takes 1.08×. Only past about 128 does it start to cost real time. **On this GPU, handling up to ~64 tokens per pass is essentially free**, because you are paying for the weight read either way.
 
@@ -49,7 +49,7 @@ Our dLLM is **Fast-dLLM v2** from NVIDIA. It is the same Qwen2.5-1.5B model, ret
 
 Inside a block, positions can see each other in both directions. Across blocks, a block can only see the blocks before it. That rule (**block-causal attention**) is what lets finished blocks go into the KV cache unchanged.
 
-If the model commits 2 tokens per pass on average, it writes about twice as fast as a normal model, because each pass still costs about the same 12 ms. The threshold is a dial:
+If the model commits 2 tokens per pass on average, it writes about twice as fast as a normal model, because each pass still costs about the same 12–14 ms. The threshold is a dial:
 - High τ: commit only very confident guesses. Fewer tokens per pass, slower, more accurate.
 - Low τ: commit more aggressively. Faster, but more wrong guesses.
 - τ = 1 means one token per pass, the same speed profile as a normal model.
@@ -58,21 +58,23 @@ In our October pilot at τ = 0.9, the model committed about 1.7–2.1 tokens per
 
 ## 5. The catch: the reference software wastes the advantage
 
-NVIDIA's own code for this model takes **22 ms per pass**, not 12. We profiled it:
+NVIDIA's own code for this model takes **17.6 ms per pass** on the laptop (in its performance power mode), against a floor of about 13.6 ms for its matrix multiplies. We profiled where the rest goes:
 
-| Where the 22 ms goes | Time |
+| Where one pass's 17.6 ms goes | Time |
 |---|---|
-| Reading weights for the matrix multiplies (the unavoidable part) | ~11.6 ms |
-| Everything else on the GPU, spread over ~1,364 tiny kernel launches | ~4.2 ms |
-| The GPU sitting idle while Python on the CPU issues the next kernel | ~6.5 ms |
+| Reading weights for the matrix multiplies (the unavoidable part) | ~13.8 ms |
+| Small operations around them (norms, rotary encoding, activations, adds), spread over ~1,400 kernel launches | ~1.4 ms |
+| Copying the KV cache and running attention | ~1.0 ms (and growing as the text gets longer) |
+| The GPU idle between kernels | ~1.3 ms |
 
 The code is written for clarity, not speed. Every pass it:
-- builds an attention mask on the CPU and copies it to the GPU
-- copies the entire KV cache with `torch.cat` in every layer, then duplicates it 6× (`repeat_kv`) before attention
-- computes a full softmax over all 151,936 vocabulary entries for 32 positions, even though only 8 are used
-- stops 5+ times to ask the GPU a yes/no question, which forces the CPU to wait for the GPU to drain
+- launches about 1,400 small kernels, with idle gaps between them
+- copies the entire KV cache with `torch.cat` in every layer, then duplicates it 6× (`repeat_kv`) before attention, so attention gets more expensive the longer the text: about 3 ms per pass at 1,000 tokens of context and 10 ms at 4,000
+- computes a full softmax over all 151,936 vocabulary entries for 32 positions and stops several times to ask the GPU a yes/no question, which rules out recording the pass as a CUDA Graph
 
-So the dLLM at 22 ms per pass and ~1.7 tokens per pass ends up at 78 tok/s on math, barely above llama.cpp's 64.6, and *slower* than llama.cpp on prose. The model has the advantage; the software throws it away.
+So the dLLM ends up at roughly 70–110 tok/s on math problems, a good margin over llama.cpp's 76 on some problems and none on others, and no faster than llama.cpp on prose. The model has the advantage; the software gives part of it back.
+
+(In October we measured 22 ms per pass. That turned out to be the laptop's "balanced" power mode, which slows the GPU and its memory. A lesson for the whole project: always record the power mode and clocks.)
 
 ## 6. What we are building
 
@@ -85,7 +87,7 @@ We write the parts that are specific to diffusion decoding. There are two layers
 The **driver** is the Python program that runs generation. It is the loop from section 4: build the block, run a pass, pick the tokens to commit, repeat, commit the block, start the next. It also owns the KV cache. Ours differs from NVIDIA's in three ways that matter:
 
 - **A static KV cache.** One buffer allocated up front, written in place. No `torch.cat`, no reallocation, every tensor shape fixed.
-- **A CUDA Graph.** Because shapes are fixed, we can record one entire forward pass (all ~1,400 kernel launches) once, then replay it with a single launch. That removes most of the 6.5 ms of CPU idle time.
+- **A CUDA Graph.** Because shapes are fixed, we can record one entire forward pass (all ~1,400 kernel launches) once, then replay it with a single launch. That removes most of the idle gaps between kernels (about 1 ms per pass) and is also what lets our fused kernels pay off.
 - **Swappable ops.** Each operation in the pass can run either the stock PyTorch version or ours, behind a switch. We start with all stock ops (stage 1) to prove the static cache and graph work, then swap in our kernels one at a time, and check each against the version it replaces.
 
 The same driver also runs the normal model (Qwen2.5-1.5B-Instruct) as a block size of 1. That gives us an AR engine built exactly like our dLLM engine, which we compare with llama.cpp to show our engine is genuinely fast.
@@ -191,7 +193,7 @@ Every piece can start right away. Kernels test on saved or random tensors, accur
 |---|---|
 | **Token** | A piece of text, roughly a word. The vocabulary has 151,936. |
 | **Weights** | The model's fixed numbers (~1.5 B, ~3 GB). Read once per forward pass. |
-| **Forward pass / pass / step** | One run of the model over its input. The unit of cost here (~12 ms minimum on the laptop). |
+| **Forward pass / pass / step** | One run of the model over its input. The unit of cost here (~13 ms minimum on the laptop). |
 | **Logits** | The model's score for every vocabulary token at each position. |
 | **AR (autoregressive)** | One token per pass. How normal LLMs work. |
 | **dLLM / block diffusion** | Fills a 32-token block of blanks over several passes, several tokens per pass. |

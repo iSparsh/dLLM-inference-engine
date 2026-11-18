@@ -258,7 +258,7 @@ footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 
         <text x="400" y="99" text-anchor="middle" class="val">1 tok</text>
         <text x="220" y="190" text-anchor="middle" class="lab">250-token answer = 250 passes ≈ 3.9 s at best</text>
       </svg>
-      <figcaption>The arithmetic for one token is tiny next to a 3 GB read, so the math units wait. This caps a normal model near 75–80 tok/s on this GPU. llama.cpp gets <b>64.6 tok/s</b>.</figcaption>
+      <figcaption>The arithmetic for one token is tiny next to a 3 GB read, so the math units wait. This caps a normal model near 75–80 tok/s on this GPU. llama.cpp gets <b>76 tok/s</b>, about 97% of that limit.</figcaption>
     </figure>
     <figure>
       <div class="fig-title">Diffusion (dLLM): a 32-slot block per pass</div>
@@ -323,7 +323,7 @@ footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 
       <div class="readout" id="readout"></div>
       <p class="dec-msg" id="dec-msg"></p>
     </div>
-    <figcaption><b>Illustration, not a recorded run.</b> The text is from a GSM8K problem and the schedule is made up, but its average (31 tokens in 17 denoise passes, plus one commit pass) matches what we measured on math at τ = 0.9. Each pass here costs the same ~12–22 ms whether it commits 1 token or 3.</figcaption>
+    <figcaption><b>Illustration, not a recorded run.</b> The text is from a GSM8K problem and the schedule is made up, but its average (31 tokens in 17 denoise passes, plus one commit pass) matches what we measured on math at τ = 0.9. Each pass costs about the same 14–18 ms whether it commits 1 token or 3.</figcaption>
   </figure>
 </section>
 
@@ -331,19 +331,20 @@ footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 
 <section class="stack-lg" id="time">
   <div class="sec-head prose">
     <div class="sec-num">3 · WHERE THE TIME GOES</div>
-    <h2>The reference code spends 10 of its 22 ms on overhead</h2>
-    <p>NVIDIA's code for this model takes about 22 ms per pass on the laptop. Only about 11.6 ms of that is the weight reading that no engine can avoid. The rest is many tiny GPU operations and the GPU sitting idle while Python on the CPU decides what to launch next. That overhead is what our engine removes.</p>
+    <h2>About 4 of the reference's 17.6 ms per pass are avoidable</h2>
+    <p>NVIDIA's code for this model takes 17.6 ms per pass on the laptop in its performance power mode. About 13.8 ms is the matrix multiplies, already at the cuBLAS floor. The rest is roughly 1,400 small kernels with idle gaps between them, plus copying the KV cache before every attention step. That overhead is what our engine removes, and the cache copying grows with the length of the text.</p>
   </div>
   <figure>
     <div class="fig-title">One forward pass, milliseconds</div>
     <div class="legend" aria-hidden="true">
       <span><i style="background: var(--s1)"></i>matrix multiplies (cuBLAS, stays)</span>
-      <span><i style="background: var(--s2)"></i>other GPU work → K1, K2, K3</span>
-      <span><i style="background: var(--s3)"></i>GPU idle, waiting on CPU → static cache + CUDA Graph</span>
+      <span><i style="background: var(--s2)"></i>small ops → K3 (and K1)</span>
+      <span><i style="background: var(--s3)"></i>KV copies + attention → static cache + K2</span>
+      <span><i style="background: var(--s4)"></i>GPU idle between kernels → CUDA Graph</span>
       <span><i class="hatch"></i>estimate</span>
     </div>
-    <div class="scroll-x"><svg class="chart" id="chart-time" viewBox="0 0 760 200" role="img" aria-label="Reference pass: 11.6 ms matrix multiplies, 4.2 ms other GPU work, 6.5 ms CPU gaps, 22.3 ms total. Our target: about 14.5 to 16 ms."></svg></div>
-    <figcaption>Reference numbers measured with <code>torch.profiler</code> in the pilot (~1,364 kernels per pass, 15.8 ms of GPU-busy time, ~22 ms wall time). The target bar is the survey's estimate of 14.5–16 ms; its split is illustrative. Our first profiling task confirms how the 4.2 ms divides between attention, selection and the small ops.</figcaption>
+    <div class="scroll-x"><svg class="chart" id="chart-time" viewBox="0 0 760 200" role="img" aria-label="Reference pass: 13.8 ms matrix multiplies, 1.4 ms small ops, 1.0 ms KV copies and attention, 1.4 ms idle gaps, 17.6 ms total. Our target: about 14.5 ms."></svg></div>
+    <figcaption>Measured with <code>tools/profile_reference.py</code> on the RTX 4060 Laptop (performance profile, GSM8K prompt, ~130 tokens of context). The target bar is an estimate. The KV-copy and attention part grows with context: about 3 ms per pass at 1,000 tokens and 10 ms at 4,000, which is where K2 pays off most. In October we measured 22 ms per pass; that was the laptop's power-saving "balanced" mode.</figcaption>
   </figure>
 </section>
 
@@ -496,8 +497,8 @@ footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 
       <span><i style="background: var(--s2)"></i>dLLM · Fast-dLLM v2 1.5B, τ = 0.9</span>
       <span><i class="hatch"></i>projected, not yet measured</span>
     </div>
-    <div class="scroll-x"><svg class="chart" id="chart-tps" viewBox="0 0 760 345" role="img" aria-label="Measured: llama.cpp AR 64.6, Hugging Face AR 48, reference dLLM 78 on math and 54 on prose tokens per second. Projected for our engine: AR about 70, dLLM about 130 on math and 80 on prose."></svg></div>
-    <figcaption>Solid bars are pilot measurements on the RTX 4060 Laptop. Hatched bars are projections at ~13–15 ms per pass; producing the real numbers is the project. Even if everything works, the win depends on the task: large on math, small on prose.</figcaption>
+    <div class="scroll-x"><svg class="chart" id="chart-tps" viewBox="0 0 760 305" role="img" aria-label="Measured: llama.cpp AR 76, Hugging Face AR 64, reference dLLM 93 on math tokens per second. Projected for our engine: AR about 74, dLLM about 125 on math and 80 on prose."></svg></div>
+    <figcaption>Solid bars are measurements on the RTX 4060 Laptop in its performance power mode (the dLLM bar averages three GSM8K problems, which ranged from 68 to 113 tok/s). Hatched bars are projections at about 14.5 ms per pass; producing the real numbers is the project. Even if everything works, the win depends on the task: clear on math, about even on prose.</figcaption>
   </figure>
 </section>
 
@@ -609,7 +610,7 @@ footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 
     </article>
     <article class="piece" style="--k: var(--s3)">
       <h3>Speed measurement <span class="tag">MEASURE</span></h3>
-      <p>Profile the reference (where the 22 ms goes), the cuBLAS knee on all three GPUs, llama.cpp and HF baselines, the waterfall and the final grid.</p>
+      <p>Profile the reference (where the 17.6 ms goes), the cuBLAS knee on all three GPUs, llama.cpp and HF baselines, the waterfall and the final grid.</p>
       <dl><dt>gives</dt><dd>profiles, timing results</dd><dt>needs</dt><dd>pilot scripts (work now), then the driver</dd></dl>
       <div class="chips"><span class="chip">LLM knowledge: some</span><span class="chip">4060 + 3090 + Euler</span></div>
     </article>
@@ -758,15 +759,15 @@ footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 
   (function time() {
     var svg = document.getElementById("chart-time");
     var W = 760, L = 190, R = 110, T = 14;
-    var pw = W - L - R, xMax = 24;
+    var pw = W - L - R, xMax = 20;
     function x(v) { return L + (v / xMax) * pw; }
-    var cols = ["var(--s1)", "var(--s2)", "var(--s3)"];
-    var names = ["matrix multiplies", "other GPU work", "GPU idle, waiting on CPU"];
+    var cols = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)"];
+    var names = ["matrix multiplies", "small ops", "KV copies + attention", "GPU idle between kernels"];
     var rows = [
-      { label: "NVIDIA reference", sub: "measured", vals: [11.6, 4.2, 6.5], total: "22.3 ms", est: false, y: T + 20 },
-      { label: "Our engine target", sub: "estimate", vals: [11.6, 2.5, 0.5], total: "≈ 14.5–16 ms", est: true, y: T + 92 }
+      { label: "NVIDIA reference", sub: "measured", vals: [13.8, 1.4, 1.0, 1.4], total: "17.6 ms", est: false, y: T + 20 },
+      { label: "Our engine target", sub: "estimate", vals: [13.6, 0.4, 0.3, 0.2], total: "≈ 14.5 ms", est: true, y: T + 92 }
     ];
-    [0, 4, 8, 12, 16, 20, 24].forEach(function (v) {
+    [0, 4, 8, 12, 16, 20].forEach(function (v) {
       svg.appendChild(s("line", { x1: x(v), x2: x(v), y1: T + 6, y2: T + 150, class: v === 0 ? "ax" : "grid" }));
       svg.appendChild(s("text", { x: x(v), y: T + 168, "text-anchor": "middle", class: "tick" }, v + " ms"));
     });
@@ -802,12 +803,11 @@ footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 
     var pw = W - L - R;
     function x(v) { return L + (v / xMax) * pw; }
     var rows = [
-      ["AR", "llama.cpp", 64.6, false],
-      ["AR", "Hugging Face PyTorch", 48, false],
-      ["AR", "our engine", 70, true],
-      ["dLLM", "NVIDIA reference · math", 78, false],
-      ["dLLM", "NVIDIA reference · prose", 54, false],
-      ["dLLM", "our engine · math", 130, true],
+      ["AR", "llama.cpp", 76, false],
+      ["AR", "Hugging Face PyTorch", 64, false],
+      ["AR", "our engine", 74, true],
+      ["dLLM", "NVIDIA reference · math", 93, false],
+      ["dLLM", "our engine · math", 125, true],
       ["dLLM", "our engine · prose", 80, true]
     ];
     var defs = s("defs", {});

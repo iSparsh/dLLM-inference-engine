@@ -1,7 +1,7 @@
 # Project Plan: Fast dLLM Inference on Edge GPUs
 
 ECE 759, Fall 2026. Team: Sparsh Mishra, Munasib Ilham, M Sadman Sakib, Ayesha Shafique.
-Work division and interfaces come next and will be added as a section here.
+The work division is in [specs/](specs/README.md) and the contracts in [INTERFACES.md](INTERFACES.md).
 
 Source material in this folder:
 - `final-project-kick-off.pdf`, `ECE_759_Proposal.pdf`, `ECE759 - Final Project Proposal Feedback.pdf`, `DLLM-Idea-Prose.pdf`
@@ -47,7 +47,7 @@ Sparsh will explain this change to the TAs in person. The report must cite the f
 ## 3. Research questions
 
 **RQ1. Engine:** how much of the reference dLLM's per-step overhead can our driver and kernels remove **without changing the output**?
-- Target: 22 ms → ~14.5–16 ms per step on the 4060.
+- Target on the 4060 (performance power profile): 17.6 ms → about 14.5 ms per pass at short context (~1.2×), with a larger gain as the context grows (see 4.3). The 22 ms measured in October was on the laptop's "balanced" 45 W profile.
 - Shown as an ablation waterfall (ms/step after each optimization). You can read more about it [here](https://medium.com/@rajilini/ablation-study-what-is-it-in-machine-learning-0a1d362b366d). It is basically a fancy way to say that we measure performance of the system as we add features.
 
 **RQ2. dLLM vs AR:** with both on fast engines, is the dLLM worth it?
@@ -58,11 +58,11 @@ Sparsh will explain this change to the TAs in person. The report must cite the f
 **RQ3. Forward passes:** at batch 1 the GPU is memory-bound, so a 64-row pass costs about the same as a 32-row pass. Can that free compute cut the **number of passes** per answer?
 - Measure the opportunity offline first, then build only what the data supports (see 5.3).
 
-Expected outcome, from the pilot numbers at ~13–15 ms/step:
-- dLLM: ~130 tok/s on math and ~80 tok/s on prose.
-- AR: ~70 tok/s on our engine and 64.6 tok/s on llama.cpp.
+Expected outcome at ~14.5 ms per pass (4060, performance profile):
+- dLLM: ~125 tok/s on math (≈1.8 tokens per pass including the commit pass) and ~80 tok/s on prose (≈1.2).
+- AR: llama.cpp measures 76 tok/s (13.2 ms per token, about 97% of the cuBLAS floor); our engine's AR mode should land near it.
 
-That would be a real but task-dependent win. RQ3 is what could widen it.
+So the dLLM should win clearly on math and roughly tie on prose. RQ3 is what could widen the gap, because a pass over 64 rows costs only ~2% more than one over 32.
 
 ---
 
@@ -83,32 +83,34 @@ How the dLLM generates (reference code: HF `modeling.py` `generate()`):
 Higher τ commits fewer tokens per pass, which is slower but more accurate. τ = 1 means one token per pass.
 
 ### 4.2 Why speed is all about memory traffic (measured on the 4060, 256 GB/s)
-- Every forward pass reads all ~3.09 GB of weights, so ~12 ms per pass is the floor.
-- cuBLAS time for a full step barely changes with the number of tokens per pass: 1.02× at 8 tokens, 1.06× at 32 and 1.08× at 64, against 1 token. It only climbs from 128 (1.31×) and 256 (2.26×). **Up to ~64 tokens per pass is basically free.**
+- Every forward pass reads all ~3.09 GB of weights, so ~12 ms per pass is the theoretical floor. cuBLAS measures **12.8 ms** for all of the model's matrix multiplies at 1 token per pass, and **13.6 ms** at 32 (including the 467 MB LM head).
+- That cost barely changes with the number of tokens per pass: 1.06× at 32 tokens and 1.08× at 64, against 1 token. It only climbs from 128 (1.29×). **Up to ~64 tokens per pass is basically free.**
 - A naive custom matmul kernel fell from 242 GB/s at 1 token to 24 GB/s at 32. That is why we keep cuBLAS.
 
-### 4.3 Where the reference's 22 ms per pass goes
+### 4.3 Where the reference's time per pass goes
+Measured 2026-11-17 with `tools/profile_reference.py` ([research/reference-profile.md](research/reference-profile.md)): 4060 on the **performance** power profile, GSM8K prompts, τ = 0.9, context ≈ 130 tokens.
 
-| Part | Time | Fix |
+| Part of one pass | ms | What removes it |
 |---|---|---|
-| Matrix multiplies (cuBLAS) | ~11.6 ms | none (floor) |
-| Other GPU work in ~1,364 kernels | ~4.2 ms | our kernels and fusion |
-| CPU launch gaps and syncs | ~6.5 ms | static cache + CUDA Graph |
+| Matrix multiplies (cuBLAS) | 13.8 | nothing; already at the floor (13.6) |
+| Norms, RoPE, SiLU and other small ops (~1,400 kernels in total) | 1.4 | K3 fused ops |
+| KV-cache copies + attention | 1.0 | static cache + K2 |
+| Selection over the vocabulary | 0.04 | K1 (which mainly removes CPU syncs) |
+| GPU idle between kernels | ~1.3 | CUDA Graph |
+| **Total per pass** (17.3 forward + 0.3 decode loop) | **17.6** | target ≈ 14.5 |
 
-What the other GPU work does wrong:
-- It rebuilds a `[32, L+32]` boolean mask on the CPU every pass.
-- It runs `torch.cat` over the whole KV cache in every layer, then `repeat_kv` (a 6× copy), then SDPA with an explicit mask. That is about 15× the necessary KV traffic.
-- It runs a full-vocab bf16 softmax for 32 rows when only 8 are used.
-- It forces 5 or more CPU-GPU syncs per pass.
+Two corrections to what we believed in October:
+- **The 22 ms per pass was the power profile.** On "balanced" (45 W) the GPU and its memory clock down; on "performance" the same code takes 17.6 ms. Every timing run must record the profile and clocks.
+- **The decode loop outside the forward is only ~0.3 ms per pass.** The overhead is inside the forward: many small kernels and the gaps between them. A CUDA Graph of the forward alone took it from 17.2 to 16.1 ms.
 
-Details with file:line references are in `research/fastdllm-v2-survey.md` §1.
+**Attention grows with context.** The HF path (concatenate the cache, copy it 6×, masked attention) costs per pass about 0.9 ms at 128 tokens of context, 3.1 ms at 1,024 and 10.6 ms at 4,096. A plain library call on prepared inputs would take 0.3, 0.7 and 1.9 ms. GSM8K runs reach 300–600 tokens of context, so K2 matters more as an answer gets longer, and much more for long prompts.
 
 ### 4.4 Measured tokens per pass (reference, τ = 0.9)
 
 | Prompt | Tokens per pass | Throughput |
 |---|---|---|
-| Math (GSM8K) | ~1.73–2.1 | 78 tok/s |
-| Prose | ~1.2 | 53–56 tok/s, slower than llama.cpp's 64.6 |
+| Math (GSM8K) | ~1.73–2.1 | 68–113 tok/s on three prompts (performance profile) |
+| Prose | ~1.2 | 53–56 tok/s (October, balanced profile) |
 
 GitHub issue #81 reports the same no-speedup result on short answers.
 
@@ -137,7 +139,7 @@ Write each kernel straight away as the best version we can, rather than a sequen
 | **K2** | **Block-causal attention:** understands grouped KV heads (each KV head serves 6 query heads), so K/V are loaded once; split along the KV length with a final reduction (bs=1 with 2 KV heads leaves the GPU idle otherwise); implicit mask; reads the static cache in place; L read from device memory; q_len ∈ {1, 32, 64} | `torch.cat` + `repeat_kv` + masked SDPA (~15× KV traffic) |
 | **K3** | **Fused small ops:** RMSNorm + residual, RoPE + KV-cache write, SiLU·mul | most of the ~1,400 launches |
 
-K2 is worth ~0.5 ms at L = 300, ~1.7 ms at 1k and ~3.4 ms at 2k (upper-bound estimates; nsys confirms). q_len = 1 is AR mode; 64 is for P2/P3 below.
+K2 is worth up to ~0.6 ms per pass at 128 tokens of context, ~2.4 ms at 1k and ~8.7 ms at 4k (HF path minus the library lower bound in 4.3). q_len = 1 is AR mode; 64 is two consecutive blocks for P2. P3 needs a two-branch variant (5.3).
 
 **K1 gotcha:** the reference compares a **bf16-rounded** probability against τ. An fp32 kernel flips decisions at the margin unless it emulates that rounding. Test that the selected sets match the reference over many real passes.
 
@@ -147,7 +149,7 @@ K2 is worth ~0.5 ms at L = 300, ~1.7 ms at 1k and ~3.4 ms at 2k (upper-bound est
 |---|---|---|---|---|
 | **P1** | Stop at the first fully decoded EOS and skip the final commit pass | exact | 3–6% of passes | always (easy) |
 | **P2** | Fuse the commit pass with the next block's first denoise pass, using a **guessed** T0 (from the last denoise pass), verified afterwards | exact once verified | 3.5–6% of passes | the T0 guess is right ≥ ~70% of the time |
-| **P3** | **Speculative step pipelining:** run step t and a guessed step t+1 in one 64-row pass; keep the second half if the guess was right | exact once verified | ~1.2–1.45× if the hit rate h is 0.3–0.6 | h ≳ 0.4 |
+| **P3** | **Speculative step pipelining:** run step t and a guessed step t+1 in one pass; keep the second half if the guess was right. Both halves are the *same* block at the same positions, so attention needs two isolated branches, not 64 consecutive rows | exact once verified | ~1.2–1.45× if the hit rate h is 0.3–0.6 | h ≳ 0.4, and a guess rule that can predict multi-token commits |
 | **P4** | Approximate commit rules: a stricter τ₂ beyond the current sub-block, or committing a position whose guess held steady over 2 passes | changes output | 10–20% fewer passes for 1–2 points of accuracy | time allows |
 
 The hit rates for P2 and P3 come from the trace dump (E3). **They are a report figure whether or not we build the feature.**
@@ -174,7 +176,8 @@ The hit rates for P2 and P3 come from the trace dump (E3). **They are a report f
 - Use the same chat template and answer extraction for both models.
 
 **Measurement hygiene:**
-- Laptop on the performance power profile. The pilot ran at a 45 W cap and saw memory drop to 6001 MHz under HF eager, plus 10–14% run-to-run variance.
+- Laptop on the performance power profile. The pilot ran at a 45 W cap and saw memory drop to 6001 MHz under HF eager, plus 10–14% run-to-run variance; that alone moved the reference from 17.6 to 22 ms per pass.
+- Microbenchmarks warm the GPU up for a second before timing (`dllm.timing.benchmark` does this). An idle laptop GPU sits at 210 MHz SM / 405 MHz memory, which made our first kernel timings 3–10× too slow. Compare kernels as CUDA Graph replays (`bench/bench_op.py --graph`), as the engine runs them.
 - Log SM and memory clocks with every run.
 - Warm up first and repeat each run.
 
@@ -189,7 +192,7 @@ The hit rates for P2 and P3 come from the trace dump (E3). **They are a report f
 | RTX 4000 SFF Ada | Ada sm_89 | 280 GB/s | 20 GB | **Euler `instruction` partition.** Same architecture and similar bandwidth to the 4060, so it doubles as the reproducible edge GPU and is the GPU for teammates without one. |
 
 Euler facts, from `scripts/euler/probe_euler.sh` (job 122802):
-- `-p instruction --gres=gpu:1`, **max 45 min per job**.
+- `-p instruction --gres=gpu:1`, **max 45 min per job** (the course notes say 60; the partition enforces 45).
 - Modules `nvidia/cuda/13.0.0` and `gcc/14.3.0`. Driver 580 (CUDA 13.0).
 - System Python 3.12, no torch preinstalled. **Compute nodes have internet** (HF and pypi reachable).
 - Home is CephFS; node-local NVMe at `/scratch`.
@@ -245,7 +248,7 @@ Each row is a complete result on its own. If we stop early, the report still has
 | Risk | Mitigation |
 |---|---|
 | CUDA Graph capture through our driver fights us (aliasing between replays, as in PR #51; cuBLAS picking different kernels) | Stage 1 de-risks it in week 1. Fallback: `torch.compile(mode="reduce-overhead")` with our ops registered through `torch.library`. |
-| GPU-busy time is already ~20 ms, so graphs recover little | E0 tells us on day 1; shift effort to K2/K3 accordingly. |
+| Graphs recover little (confirmed: ~1.1 ms per pass) | Effort shifts to K3 fusion and K2 at longer contexts. Honest result: on this GPU the reference is closer to the floor than we thought. |
 | K1's selected tokens drift from the reference (bf16 rounding) | Compare selection sets on real traces; emulate the rounding. |
 | The P3 hit rate is low | Report the measurement as a result and skip the build. |
 | n = 100 too small to separate settings | Paired per-problem analysis; full set for the headline settings if time allows. |
@@ -254,6 +257,7 @@ Each row is a complete result on its own. If we stop early, the report still has
 ---
 
 ## 11. Next steps
-1. **Interfaces and ownership** (next session): kernel contracts plus saved real tensors, the op registry, the trace format, the results JSONL schema, the Euler job template, the environment setup per OS. Every owner must be able to work unblocked.
-2. Starter code / repo skeleton (separate session).
-3. Sparsh: talk to the TA about the scope change, and whether the research partition is allowed.
+1. ~~Interfaces and starter code~~: done. See [INTERFACES.md](INTERFACES.md), the starter code, and [setup/ENVIRONMENT.md](setup/ENVIRONMENT.md).
+2. Pick slices from [specs/](specs/README.md); everyone reaches M0 (environment working) by Thu 11/19.
+3. Run `scripts/euler/setup_env.sh` on Euler for the first time and fix anything it shows; run `scripts/check_macos.sh` on a Mac.
+4. Sparsh: talk to the TA about the scope change, and whether the research partition is allowed.
