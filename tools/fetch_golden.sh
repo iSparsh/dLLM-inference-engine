@@ -2,13 +2,14 @@
 # Get the golden tensors into artifacts/golden/.
 #
 # Usage, from the repo root:
-#   tools/fetch_golden.sh <url>                       download, then extract
-#   tools/fetch_golden.sh ~/Downloads/dllm-golden-v1.tar.gz   extract a file you downloaded yourself
+#   tools/fetch_golden.sh                  extract the committed archive (tests/fixtures/dllm-golden-v1.tar.gz)
+#   tools/fetch_golden.sh <file.tar.gz>    extract another archive
+#   tools/fetch_golden.sh <url>            download an archive, then extract it
 #
 # The archive (.tar.gz) holds one folder per case at its root: <case>/{meta.json,tensors.safetensors}.
-# The team's link is in the group chat. Or regenerate: uv run python tools/dump_golden.py
+# Or regenerate the cases on any NVIDIA GPU or Euler: uv run python tools/dump_golden.py
 set -euo pipefail
-src=${1:?Give the team link or the path of a downloaded .tar.gz}
+src=${1:-tests/fixtures/dllm-golden-v1.tar.gz}
 if [[ -f "$src" ]]; then
   archive=$src
 else

@@ -147,7 +147,7 @@ artifacts/golden/<case>/              e.g. dllm-denoise-13-block_attention, dllm
   tensors.safetensors    the op's tensor arguments by name, plus "expected_<name>" for its output and every in-place argument
 ```
 
-`dllm.golden.load(case_dir) -> (meta, tensors)`. `tests/test_ops.py` runs every case it finds, with the op name in the test ID (`pytest -k select_commit` selects them). Golden files are not committed. Get them with `tools/fetch_golden.sh <release-url>` (a `.tar.gz` whose root holds the case folders, extracted into `artifacts/golden/`), or regenerate with `uv run python tools/dump_golden.py` on any NVIDIA GPU or Euler.
+`dllm.golden.load(case_dir) -> (meta, tensors)`. `tests/test_ops.py` runs every case it finds, with the op name in the test ID (`pytest -k select_commit` selects them). The cases are committed as one archive, `tests/fixtures/dllm-golden-v1.tar.gz` (32 MB; its root holds the case folders). Run `tools/fetch_golden.sh` once to extract it into `artifacts/golden/` (gitignored), or regenerate the cases with `uv run python tools/dump_golden.py` on any NVIDIA GPU or Euler. If you regenerate them for a new version, commit a new archive under a new name rather than overwriting this one.
 
 ## 5. Per-pass traces
 

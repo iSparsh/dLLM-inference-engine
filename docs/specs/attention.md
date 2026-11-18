@@ -76,7 +76,7 @@ On Euler, run `sbatch scripts/euler/setup_env.sh` once, then `sbatch scripts/eul
 
 b) Read `dllm/ops/reference.py`: the functions `rope_kv_write` and `block_attention`. These are the ground truth; your kernels must match them. Read `csrc/ops.cpp` (the op schemas), `csrc/example_axpy.cu` (a complete working kernel showing the launch pattern: device guard, current stream, launch check), then the two stub files you will fill in.
 
-c) Get the golden tensors (real inputs and outputs from the model) with `tools/fetch_golden.sh <url from the team chat>`, or make them yourself with `uv run python tools/dump_golden.py` on any NVIDIA GPU or Euler. Load one case and print the shapes:
+c) Extract the golden tensors (real inputs and outputs from the model, committed as an archive) with `tools/fetch_golden.sh`, or make them yourself with `uv run python tools/dump_golden.py` on any NVIDIA GPU or Euler. Load one case and print the shapes:
 ```
 uv run python -c "from dllm import golden; m, t = golden.load('artifacts/golden/dllm-denoise-13-block_attention'); print(m); print({k: v.shape for k, v in t.items()})"
 ```

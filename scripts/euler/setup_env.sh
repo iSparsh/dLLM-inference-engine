@@ -11,5 +11,6 @@ fi
 uv sync --locked --python 3.12
 python tools/download_models.py
 python -c "from dllm.ops.cuda import load; load()"   # build our CUDA ops once
+tools/fetch_golden.sh
 python tools/smoke_test.py
 pytest -q

@@ -33,7 +33,7 @@ Start from those; don't rewrite them.
 
 ## Problem 1 (M0). Unblock everyone
 
-a) Generate the golden tensors with `tools/dump_golden.py`, check their size, and publish them as a GitHub release asset so `tools/fetch_golden.sh` works for everyone. Post the URL in the team chat.
+a) The golden tensors are committed as `tests/fixtures/dllm-golden-v1.tar.gz` (`tools/fetch_golden.sh` extracts them). If an op contract changes, regenerate them with `tools/dump_golden.py`, commit a new archive under a new version name, and point `fetch_golden.sh` at it.
 
 b) Check that `tools/dump_traces.py` works on Euler (the Accuracy slice needs traces), and that `scripts/euler/setup_env.sh` succeeds on Euler end to end.
 

@@ -58,7 +58,7 @@ uv run pytest -q
 
 b) Read `dllm/ops/reference.py` for `add_rmsnorm`, `silu_mul` and `select_commit`, and `dllm/reference_decode.py` to see where `select_commit` sits in the decode loop. Read `csrc/ops.cpp` (the op schemas), `csrc/example_axpy.cu` (a complete working kernel showing the launch pattern), then your three stub files.
 
-c) Get the golden tensors (`tools/fetch_golden.sh <url>` or `uv run python tools/dump_golden.py`). For `select_commit` they hold three real logits cases. Traces (`tools/dump_traces.py`) record decisions, not logits, so for step-by-step checks you'll use a live comparison (Problem 3).
+c) Extract the golden tensors with `tools/fetch_golden.sh` (they are committed as an archive; or regenerate them with `uv run python tools/dump_golden.py`). For `select_commit` they hold three real logits cases. Traces (`tools/dump_traces.py`) record decisions, not logits, so for step-by-step checks you'll use a live comparison (Problem 3).
 
 d) Create your branch `slice/selection` and push it.
 
