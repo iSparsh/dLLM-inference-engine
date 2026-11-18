@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>dLLM Engine Field Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: one reading column (~68ch) with figures that widen to 1040px; profiler-style mono labels. */
+:root {
+  --bg: #f3f5f4;
+  --surface: #fcfcfb;
+  --ink: #101614;
+  --ink-2: #46514d;
+  --muted: #727c78;
+  --line: #dbe1de;
+  --line-2: #c3ccc8;
+  --accent: #0d6b57;
+  --accent-soft: #dcefe8;
+  --s1: #2a78d6;  /* blue */
+  --s2: #eb6834;  /* orange */
+  --s3: #1baf7a;  /* aqua */
+  --s4: #eda100;  /* yellow */
+  --s5: #e87ba4;  /* magenta */
+  --s7: #6250d6;  /* violet */
+  --on-fill: #ffffff;
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1211; --surface: #181c1a; --ink: #e8eeeb; --ink-2: #b2bcb8; --muted: #86918c;
+    --line: #29302d; --line-2: #3b4440; --accent: #4fc4a3; --accent-soft: #15302a;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s7: #9085e9;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1211; --surface: #181c1a; --ink: #e8eeeb; --ink-2: #b2bcb8; --muted: #86918c;
+  --line: #29302d; --line-2: #3b4440; --accent: #4fc4a3; --accent-soft: #15302a;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s7: #9085e9;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 400 16px/1.6 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 64px;
+}
+main { max-width: 1040px; margin: 56px auto 0; display: grid; gap: 72px; }
+.prose { max-width: 68ch; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 600; }
+h3 { font-size: 1.15rem; font-weight: 600; }
+p { margin: 0; }
+.stack { display: grid; gap: 16px; }
+.stack-lg { display: grid; gap: 28px; }
+.eyebrow { font: 500 12px/1.4 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.mono { font-family: var(--f-mono); }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+code { font: 0.9em var(--f-mono); background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+strong { font-weight: 600; }
+
+/* Header */
+header.top { max-width: 1040px; margin: 0 auto; padding-block: 56px 8px; display: grid; gap: 20px; }
+.lede { font-size: 1.15rem; color: var(--ink-2); max-width: 64ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 24px; font: 13px/1.5 var(--f-mono); color: var(--muted); }
+.facts span b { color: var(--ink); font-weight: 600; }
+
+/* Section heading rail */
+.sec-head { display: grid; gap: 10px; }
+.sec-num { font: 500 12px var(--f-mono); color: var(--muted); letter-spacing: 0.06em; }
+
+/* Figures */
+figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+figcaption { font-size: 0.92rem; color: var(--ink-2); max-width: 72ch; }
+figcaption b { color: var(--ink); }
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+svg { display: block; max-width: 100%; height: auto; }
+svg.wide { min-width: 760px; }
+svg.chart { min-width: 600px; }
+.fig-title { font: 600 15px var(--f-body); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 13px var(--f-body); color: var(--ink-2); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
+.legend i.line { height: 3px; border-radius: 2px; vertical-align: 3px; width: 16px; }
+.legend i.hatch { background: repeating-linear-gradient(45deg, var(--muted) 0 2px, transparent 2px 5px); border: 1px dashed var(--muted); }
+
+/* SVG shared classes */
+.ax { stroke: var(--line-2); stroke-width: 1; }
+.grid { stroke: var(--line); stroke-width: 1; }
+.tick { fill: var(--muted); font: 11px var(--f-mono); }
+.lab { fill: var(--ink-2); font: 12px var(--f-body); }
+.lab-b { fill: var(--ink); font: 600 12.5px var(--f-body); }
+.val { fill: var(--ink); font: 600 12px var(--f-mono); }
+.inval { fill: var(--on-fill); font: 600 12px var(--f-mono); }
+.band { fill: var(--accent-soft); }
+.band-t { fill: var(--accent); font: 600 12px var(--f-body); }
+.d-box { fill: var(--surface); stroke: var(--line-2); stroke-width: 1.2; }
+.d-reused { fill: color-mix(in srgb, var(--muted) 9%, var(--surface)); stroke: var(--line-2); stroke-width: 1.2; }
+.d-ours { fill: color-mix(in srgb, var(--k) 15%, var(--surface)); stroke: var(--k); stroke-width: 1.6; }
+.d-frame { fill: none; stroke: var(--k); stroke-width: 1.4; stroke-dasharray: 6 5; }
+.d-t { fill: var(--ink); font: 600 12.5px var(--f-body); }
+.d-s { fill: var(--ink-2); font: 11px var(--f-mono); }
+.d-k { fill: var(--k); font: 600 11px var(--f-mono); }
+.d-arr { stroke: var(--ink-2); stroke-width: 1.4; fill: none; }
+.d-arr-k { stroke: var(--k); stroke-width: 1.6; fill: none; }
+.d-head { fill: var(--ink-2); }
+.d-note { fill: var(--muted); font: italic 11.5px var(--f-body); }
+.hit { fill: transparent; cursor: default; }
+
+/* Bottleneck comparison */
+.compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 720px) { .compare { grid-template-columns: 1fr; } }
+
+/* Block decoder */
+.decoder { display: grid; gap: 14px; }
+.ctx { font: 13px var(--f-mono); color: var(--muted); border-left: 3px solid var(--line-2); padding: 4px 0 4px 10px; }
+.ctx b { color: var(--ink-2); font-weight: 500; }
+.block { display: grid; gap: 6px; }
+.subrow { display: grid; grid-template-columns: 68px repeat(8, minmax(0, 1fr)); gap: 4px; align-items: stretch; }
+.subrow .rl { font: 11px var(--f-mono); color: var(--muted); align-self: center; }
+.cell { border-radius: 5px; min-height: 40px; display: grid; place-items: center; font: 500 13px var(--f-mono); border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); padding: 2px; text-align: center; overflow-wrap: anywhere; transition: background .25s, border-color .25s; }
+.cell.mask { color: var(--muted); background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--muted) 14%, transparent) 5px 7px); font-size: 10px; }
+.cell.mask.live { border-color: var(--s1); border-width: 1.5px; color: var(--s1); }
+.cell.given { background: color-mix(in srgb, var(--muted) 16%, var(--surface)); }
+.cell.done { background: var(--surface); }
+.cell.new { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.block.committed .cell { border-color: var(--accent); }
+.dec-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+button { font: 500 14px var(--f-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line-2); border-radius: 6px; padding: 7px 14px; cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+.readout { display: flex; flex-wrap: wrap; gap: 6px 22px; font: 13px var(--f-mono); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.readout b { color: var(--ink); }
+.dec-msg { font-size: 0.95rem; color: var(--ink); min-height: 3em; }
+.keys { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
+.keys span { display: inline-flex; align-items: center; gap: 6px; }
+.keys .sw { width: 16px; height: 14px; border-radius: 3px; border: 1px solid var(--line-2); }
+@media (max-width: 560px) { .subrow { grid-template-columns: repeat(4, minmax(0, 1fr)); } .subrow .rl { grid-column: 1 / -1; margin-top: 4px; } .cell { min-height: 34px; } }
+
+/* Work pieces */
+.pieces { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.piece { background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--k); border-radius: 8px; padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.piece h3 { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.piece .tag { font: 600 11px var(--f-mono); color: var(--k); letter-spacing: 0.04em; }
+.piece p { font-size: 0.93rem; color: var(--ink-2); }
+.piece dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 0.86rem; }
+.piece dt { font: 500 11px/1.9 var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.piece dd { margin: 0; color: var(--ink); min-width: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 11.5px var(--f-mono); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--ink-2); }
+
+/* Tables */
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; min-width: 520px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 11px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Timeline */
+.timeline { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.tl { padding: 16px; display: grid; gap: 8px; align-content: start; border-right: 1px solid var(--line); min-width: 0; }
+.tl:last-child { border-right: 0; }
+.tl .when { font: 600 12px var(--f-mono); color: var(--accent); }
+.tl .what { font: 600 14px var(--f-body); }
+.tl ul { margin: 0; padding-left: 16px; font-size: 0.86rem; color: var(--ink-2); display: grid; gap: 3px; }
+.tl.mark { background: var(--accent-soft); }
+@media (max-width: 820px) { .timeline { grid-template-columns: 1fr; } .tl { border-right: 0; border-bottom: 1px solid var(--line); } .tl:last-child { border-bottom: 0; } }
+
+/* Glossary */
+.gloss { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0 28px; margin: 0; }
+.gloss div { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.gloss dt { font: 600 14px var(--f-body); }
+.gloss dd { margin: 2px 0 0; font-size: 0.9rem; color: var(--ink-2); }
+
+/* Tooltip */
+#tip { position: fixed; z-index: 20; pointer-events: none; background: var(--ink); color: var(--surface); font: 12.5px/1.45 var(--f-body); padding: 7px 10px; border-radius: 6px; max-width: 260px; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+#tip b { font-weight: 600; }
+
+footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--muted); display: grid; gap: 6px; }
+
+@media (prefers-reduced-motion: reduce) { .cell { transition: none; } }
+</style>
+
+<header class="top">
+  <div class="eyebrow">ECE 759 · Fall 2026 · Final project</div>
+  <h1>dLLM Engine Field Guide</h1>
+  <p class="lede">We are building a faster engine for a diffusion language model on a laptop GPU, then testing whether it beats the best normal-LLM engine on speed and what it costs in accuracy. This page shows how the pieces work and how the work fits together. The words-only version is <a href="GUIDE.md">GUIDE.md</a>; the exact numbers are in <a href="PLAN.md">PLAN.md</a>.</p>
+  <div class="facts">
+    <span>models <b>Fast-dLLM v2 1.5B</b> vs <b>Qwen2.5-1.5B-Instruct</b></span>
+    <span>target GPU <b>RTX 4060 Laptop · 8 GB · 256 GB/s</b></span>
+    <span>video <b>~12/4</b> · report <b>12/7</b></span>
+  </div>
+</header>
+
+<main>
+
+<!-- 1. Bottleneck -->
+<section class="stack-lg" id="bottleneck">
+  <div class="sec-head prose">
+    <div class="sec-num">1 · THE BOTTLENECK</div>
+    <h2>A laptop GPU spends its time reading weights, not doing math</h2>
+    <p>Every forward pass of the model reads all 3.09 GB of weights from GPU memory. At 256 GB/s that takes about 12 ms, however little arithmetic the pass needs. A normal (autoregressive) model gets one token out of each read. A diffusion model processes a whole 32-token block in the same read and keeps every guess it is confident about.</p>
+  </div>
+  <div class="compare">
+    <figure>
+      <div class="fig-title">Autoregressive (AR): one token per pass</div>
+      <svg viewBox="0 0 440 210" role="img" aria-label="AR pass: 3.09 GB of weights stream from memory to the GPU and one token comes out.">
+        <defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-head"/></marker></defs>
+        <rect x="10" y="40" width="120" height="110" rx="8" class="d-reused"/>
+        <text x="70" y="78" text-anchor="middle" class="d-t">GPU memory</text>
+        <text x="70" y="98" text-anchor="middle" class="d-s">weights</text>
+        <text x="70" y="116" text-anchor="middle" class="val">3.09 GB</text>
+        <line x1="132" y1="95" x2="218" y2="95" class="d-arr" marker-end="url(#ah1)"/>
+        <text x="175" y="84" text-anchor="middle" class="d-s">every pass</text>
+        <text x="175" y="114" text-anchor="middle" class="d-s">~12 ms</text>
+        <rect x="222" y="40" width="110" height="110" rx="8" class="d-box"/>
+        <text x="277" y="78" text-anchor="middle" class="d-t">GPU cores</text>
+        <text x="277" y="98" text-anchor="middle" class="d-s">math units</text>
+        <text x="277" y="116" text-anchor="middle" class="d-s">mostly idle</text>
+        <line x1="334" y1="95" x2="370" y2="95" class="d-arr" marker-end="url(#ah1)"/>
+        <rect x="374" y="78" width="52" height="34" rx="5" style="--k: var(--s1)" class="d-ours"/>
+        <text x="400" y="99" text-anchor="middle" class="val">1 tok</text>
+        <text x="220" y="190" text-anchor="middle" class="lab">250-token answer = 250 passes ≈ 3.9 s at best</text>
+      </svg>
+      <figcaption>The arithmetic for one token is tiny next to a 3 GB read, so the math units wait. This caps a normal model near 75–80 tok/s on this GPU. llama.cpp gets <b>64.6 tok/s</b>.</figcaption>
+    </figure>
+    <figure>
+      <div class="fig-title">Diffusion (dLLM): a 32-slot block per pass</div>
+      <svg viewBox="0 0 440 210" role="img" aria-label="dLLM pass: the same 3.09 GB read processes 32 block positions and commits about 2 tokens.">
+        <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-head"/></marker></defs>
+        <rect x="10" y="40" width="120" height="110" rx="8" class="d-reused"/>
+        <text x="70" y="78" text-anchor="middle" class="d-t">GPU memory</text>
+        <text x="70" y="98" text-anchor="middle" class="d-s">weights</text>
+        <text x="70" y="116" text-anchor="middle" class="val">3.09 GB</text>
+        <line x1="132" y1="95" x2="218" y2="95" class="d-arr" marker-end="url(#ah2)"/>
+        <text x="175" y="84" text-anchor="middle" class="d-s">same read</text>
+        <text x="175" y="114" text-anchor="middle" class="d-s">~12 ms</text>
+        <rect x="222" y="40" width="110" height="110" rx="8" class="d-box"/>
+        <text x="277" y="78" text-anchor="middle" class="d-t">GPU cores</text>
+        <text x="277" y="98" text-anchor="middle" class="d-s">32 positions</text>
+        <text x="277" y="116" text-anchor="middle" class="d-s">at once</text>
+        <line x1="334" y1="95" x2="370" y2="95" class="d-arr" marker-end="url(#ah2)"/>
+        <rect x="374" y="62" width="52" height="30" rx="5" style="--k: var(--s2)" class="d-ours"/>
+        <rect x="374" y="98" width="52" height="30" rx="5" style="--k: var(--s2)" class="d-ours"/>
+        <text x="400" y="82" text-anchor="middle" class="val">tok</text>
+        <text x="400" y="118" text-anchor="middle" class="val">tok</text>
+        <text x="400" y="146" text-anchor="middle" class="d-s">~1.7–2.1</text>
+        <text x="220" y="190" text-anchor="middle" class="lab">~2 tokens per pass ≈ half the passes for the same answer</text>
+      </svg>
+      <figcaption>The confidence threshold τ sets how many guesses are kept each pass. Measured at τ = 0.9: <b>1.7–2.1 tokens per pass</b> on math, <b>1.2</b> on prose. Keeping more guesses is faster but makes more mistakes.</figcaption>
+    </figure>
+  </div>
+  <figure>
+    <div class="fig-title">Cost of one pass as tokens per pass grow, relative to 1 token</div>
+    <div class="legend" aria-hidden="true">
+      <span><i class="line" style="background: var(--s1)"></i>GPU · RTX 4060 Laptop (cuBLAS)</span>
+      <span><i class="line" style="background: var(--s2)"></i>CPU · i7-13700HX, 16 threads</span>
+    </div>
+    <div class="scroll-x"><svg class="chart" id="chart-knee" viewBox="0 0 760 340" role="img" aria-label="On the GPU, a pass over 64 tokens costs 1.08 times a pass over 1 token, and cost only climbs past 128. On the CPU, 32 tokens cost 12 times as much."></svg></div>
+    <figcaption>Measured in the October pilot (<code>baselines/pilot/cuda/gemm_tm.cu</code>, <code>cpu/gemm_cpu.cpp</code>): every matrix multiply of the model at M tokens per pass. <b>On the GPU, up to ~64 tokens per pass is essentially free</b>: 1.06× at 32, 1.08× at 64. The CPU has no such room: 12× at 32. That free capacity is what a dLLM spends, and what our new decoding strategies (section 5) try to spend better. Hover a point for the raw time.</figcaption>
+  </figure>
+</section>
+
+<!-- 2. Block decoding -->
+<section class="stack-lg" id="decoding">
+  <div class="sec-head prose">
+    <div class="sec-num">2 · HOW A BLOCK GETS WRITTEN</div>
+    <h2>Step through one 32-token block</h2>
+    <p>A block starts with its first token known and 31 blanks (MASK). Each pass predicts every blank in the block. Blanks in the current group of 8 whose confidence clears τ are committed, and the most confident one is always committed so every pass makes progress. When all 32 are filled, a final <strong>commit pass</strong> saves the block into the KV cache and produces the first token of the next block.</p>
+  </div>
+  <figure>
+    <div class="decoder">
+      <div class="ctx">earlier blocks, already in the KV cache: <b>… Janet's ducks lay 16 eggs per day.</b></div>
+      <div class="block" id="block" aria-live="polite"></div>
+      <div class="keys" aria-hidden="true">
+        <span><span class="sw" style="background: color-mix(in srgb, var(--muted) 16%, var(--surface))"></span>given (from previous block)</span>
+        <span><span class="sw" style="border-color: var(--s1); border-width: 1.5px"></span>blank, eligible this pass</span>
+        <span><span class="sw" style="background: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--muted) 22%, transparent) 4px 6px)"></span>blank, later group</span>
+        <span><span class="sw" style="background: var(--accent); border-color: var(--accent)"></span>committed this pass</span>
+      </div>
+      <div class="dec-bar">
+        <button id="b-prev" type="button">Previous</button>
+        <button id="b-next" type="button" class="primary">Next pass</button>
+        <button id="b-play" type="button">Play</button>
+        <button id="b-reset" type="button">Reset</button>
+      </div>
+      <div class="readout" id="readout"></div>
+      <p class="dec-msg" id="dec-msg"></p>
+    </div>
+    <figcaption><b>Illustration, not a recorded run.</b> The text is from a GSM8K problem and the schedule is made up, but its average (31 tokens in 17 denoise passes, plus one commit pass) matches what we measured on math at τ = 0.9. Each pass here costs the same ~12–22 ms whether it commits 1 token or 3.</figcaption>
+  </figure>
+</section>
+
+<!-- 3. Where the time goes -->
+<section class="stack-lg" id="time">
+  <div class="sec-head prose">
+    <div class="sec-num">3 · WHERE THE TIME GOES</div>
+    <h2>The reference code spends 10 of its 22 ms on overhead</h2>
+    <p>NVIDIA's code for this model takes about 22 ms per pass on the laptop. Only about 11.6 ms of that is the weight reading that no engine can avoid. The rest is many tiny GPU operations and the GPU sitting idle while Python on the CPU decides what to launch next. That overhead is what our engine removes.</p>
+  </div>
+  <figure>
+    <div class="fig-title">One forward pass, milliseconds</div>
+    <div class="legend" aria-hidden="true">
+      <span><i style="background: var(--s1)"></i>matrix multiplies (cuBLAS, stays)</span>
+      <span><i style="background: var(--s2)"></i>other GPU work → K1, K2, K3</span>
+      <span><i style="background: var(--s3)"></i>GPU idle, waiting on CPU → static cache + CUDA Graph</span>
+      <span><i class="hatch"></i>estimate</span>
+    </div>
+    <div class="scroll-x"><svg class="chart" id="chart-time" viewBox="0 0 760 200" role="img" aria-label="Reference pass: 11.6 ms matrix multiplies, 4.2 ms other GPU work, 6.5 ms CPU gaps, 22.3 ms total. Our target: about 14.5 to 16 ms."></svg></div>
+    <figcaption>Reference numbers measured with <code>torch.profiler</code> in the pilot (~1,364 kernels per pass, 15.8 ms of GPU-busy time, ~22 ms wall time). The target bar is the survey's estimate of 14.5–16 ms; its split is illustrative. Our first profiling task (E0) confirms how the 4.2 ms divides between attention, selection and the small ops.</figcaption>
+  </figure>
+</section>
+
+<!-- 4. What we build -->
+<section class="stack-lg" id="build">
+  <div class="sec-head prose">
+    <div class="sec-num">4 · WHAT WE BUILD</div>
+    <h2>Reuse the model and cuBLAS. Write the parts only a dLLM needs.</h2>
+    <p>We don't reimplement the model. Hugging Face loads the weights and the tokenizer, and cuBLAS does every matrix multiply, since it is already at the memory limit for our shapes. We write the <strong>driver</strong>: the program that runs the block-by-block loop, owns the KV cache and records each pass as a CUDA Graph. We also write three groups of <strong>CUDA kernels</strong> that replace the slow PyTorch operations around the matrix multiplies.</p>
+  </div>
+  <figure>
+    <div class="fig-title">One forward pass, with who provides each step</div>
+    <div class="legend" aria-hidden="true">
+      <span><i style="background: color-mix(in srgb, var(--muted) 18%, var(--surface)); border: 1px solid var(--line-2)"></i>reused: cuBLAS / Hugging Face</span>
+      <span><i style="background: var(--s2)"></i>our CUDA kernels (K1, K2, K3)</span>
+      <span><i style="background: var(--s1)"></i>our driver</span>
+    </div>
+    <div class="scroll-x"><svg class="wide" viewBox="0 0 1000 520" role="img" aria-label="Each of 28 layers runs RMSNorm, QKV matmul, RoPE plus KV write, attention, output matmul, then RMSNorm, gate and up matmuls, SiLU times multiply, down matmul. Matmuls use cuBLAS; the other steps are our kernels. The KV cache sits under the attention half. After the layers, the LM head matmul feeds our selection kernel, and the driver's decode loop decides the next pass. The whole pass is recorded as one CUDA Graph.">
+      <defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-head"/></marker></defs>
+      <!-- graph frame -->
+      <rect x="12" y="18" width="976" height="392" rx="12" style="--k: var(--s1)" class="d-frame"/>
+      <text x="28" y="40" style="--k: var(--s1)" class="d-k">DRIVER · whole pass recorded as one CUDA Graph · replayed with one launch</text>
+      <!-- layer frame -->
+      <rect x="28" y="54" width="944" height="232" rx="10" class="d-box" style="fill: none; stroke-dasharray: 3 4"/>
+      <text x="44" y="74" class="d-s">× 28 layers</text>
+
+      <!-- Row A (attention half) -->
+      <g>
+        <rect x="44" y="88" width="128" height="58" rx="7" style="--k: var(--s2)" class="d-ours"/>
+        <text x="108" y="112" text-anchor="middle" class="d-t">RMSNorm</text>
+        <text x="108" y="131" text-anchor="middle" style="--k: var(--s2)" class="d-k">K3</text>
+        <line x1="172" y1="117" x2="196" y2="117" class="d-arr" marker-end="url(#ah3)"/>
+        <rect x="198" y="88" width="128" height="58" rx="7" class="d-reused"/>
+        <text x="262" y="112" text-anchor="middle" class="d-t">Q, K, V matmul</text>
+        <text x="262" y="131" text-anchor="middle" class="d-s">cuBLAS</text>
+        <line x1="326" y1="117" x2="350" y2="117" class="d-arr" marker-end="url(#ah3)"/>
+        <rect x="352" y="88" width="128" height="58" rx="7" style="--k: var(--s2)" class="d-ours"/>
+        <text x="416" y="112" text-anchor="middle" class="d-t">RoPE + KV write</text>
+        <text x="416" y="131" text-anchor="middle" style="--k: var(--s2)" class="d-k">K3</text>
+        <line x1="480" y1="117" x2="504" y2="117" class="d-arr" marker-end="url(#ah3)"/>
+        <rect x="506" y="88" width="128" height="58" rx="7" style="--k: var(--s2)" class="d-ours"/>
+        <text x="570" y="112" text-anchor="middle" class="d-t">Attention</text>
+        <text x="570" y="131" text-anchor="middle" style="--k: var(--s2)" class="d-k">K2 · block-causal</text>
+        <line x1="634" y1="117" x2="658" y2="117" class="d-arr" marker-end="url(#ah3)"/>
+        <rect x="660" y="88" width="128" height="58" rx="7" class="d-reused"/>
+        <text x="724" y="112" text-anchor="middle" class="d-t">Output matmul</text>
+        <text x="724" y="131" text-anchor="middle" class="d-s">cuBLAS</text>
+        <line x1="788" y1="117" x2="812" y2="117" class="d-arr" marker-end="url(#ah3)"/>
+        <rect x="814" y="88" width="142" height="58" rx="7" style="--k: var(--s2)" class="d-ours"/>
+        <text x="885" y="112" text-anchor="middle" class="d-t">+ residual, RMSNorm</text>
+        <text x="885" y="131" text-anchor="middle" style="--k: var(--s2)" class="d-k">K3 · fused</text>
+      </g>
+      <!-- KV cache -->
+      <rect x="352" y="172" width="282" height="40" rx="7" style="--k: var(--s1)" class="d-ours"/>
+      <text x="493" y="191" text-anchor="middle" class="d-t">static KV cache</text>
+      <text x="493" y="206" text-anchor="middle" class="d-s">one buffer, written in place</text>
+      <line x1="416" y1="146" x2="416" y2="170" class="d-arr" marker-end="url(#ah3)"/>
+      <text x="410" y="163" text-anchor="end" class="d-s">writes K, V</text>
+      <line x1="570" y1="170" x2="570" y2="148" class="d-arr" marker-end="url(#ah3)"/>
+      <text x="576" y="163" class="d-s">reads in place</text>
+      <!-- connector A→B -->
+      <!-- Row B (MLP half) -->
+      <g>
+        <path d="M885 146 V 228" class="d-arr"/>
+        <path d="M885 228 H 120 V 238" class="d-arr" marker-end="url(#ah3)"/>
+        <rect x="44" y="240" width="152" height="34" rx="7" class="d-reused"/>
+        <text x="120" y="262" text-anchor="middle" class="d-t">gate + up matmul <tspan class="d-s">cuBLAS</tspan></text>
+        <line x1="196" y1="257" x2="236" y2="257" class="d-arr" marker-end="url(#ah3)"/>
+        <rect x="238" y="240" width="152" height="34" rx="7" style="--k: var(--s2)" class="d-ours"/>
+        <text x="314" y="262" text-anchor="middle" class="d-t">SiLU × mul <tspan style="--k: var(--s2)" class="d-k">K3</tspan></text>
+        <line x1="390" y1="257" x2="430" y2="257" class="d-arr" marker-end="url(#ah3)"/>
+        <rect x="432" y="240" width="152" height="34" rx="7" class="d-reused"/>
+        <text x="508" y="262" text-anchor="middle" class="d-t">down matmul <tspan class="d-s">cuBLAS</tspan></text>
+        <line x1="584" y1="257" x2="624" y2="257" class="d-arr" marker-end="url(#ah3)"/>
+        <rect x="626" y="240" width="182" height="34" rx="7" style="--k: var(--s2)" class="d-ours"/>
+        <text x="717" y="262" text-anchor="middle" class="d-t">+ residual → next layer <tspan style="--k: var(--s2)" class="d-k">K3</tspan></text>
+      </g>
+      <!-- After layers -->
+      <line x1="717" y1="274" x2="717" y2="318" class="d-arr" marker-end="url(#ah3)"/>
+      <text x="725" y="302" class="d-s">after layer 28</text>
+      <rect x="626" y="320" width="182" height="58" rx="7" class="d-reused"/>
+      <text x="717" y="344" text-anchor="middle" class="d-t">LM head matmul</text>
+      <text x="717" y="363" text-anchor="middle" class="d-s">cuBLAS · 467 MB · logits</text>
+      <line x1="626" y1="349" x2="586" y2="349" class="d-arr" marker-end="url(#ah3)"/>
+      <rect x="404" y="320" width="180" height="58" rx="7" style="--k: var(--s2)" class="d-ours"/>
+      <text x="494" y="344" text-anchor="middle" class="d-t">Parallel selection</text>
+      <text x="494" y="363" text-anchor="middle" style="--k: var(--s2)" class="d-k">K1 · τ, commit, done flag</text>
+      <!-- leave the graph: decode loop -->
+      <line x1="404" y1="349" x2="300" y2="349" class="d-arr" marker-end="url(#ah3)"/>
+      <text x="352" y="341" text-anchor="middle" class="d-s">1 flag to CPU</text>
+      <rect x="64" y="430" width="420" height="72" rx="8" style="--k: var(--s1)" class="d-ours"/>
+      <text x="274" y="456" text-anchor="middle" class="d-t">Decode loop (driver, on the CPU)</text>
+      <text x="274" y="476" text-anchor="middle" class="d-s">another pass · or commit pass · or next block · or stop</text>
+      <text x="274" y="493" text-anchor="middle" style="--k: var(--s5)" class="d-k">P1–P4 change these rules</text>
+      <path d="M298 349 H 274 V 428" class="d-arr" marker-end="url(#ah3)"/>
+      <path d="M64 466 H 24 V 117 H 42" class="d-arr" marker-end="url(#ah3)"/>
+      <text x="70" y="424" class="d-s">next pass: replay the graph</text>
+      <!-- Inputs -->
+      <rect x="560" y="430" width="420" height="72" rx="8" class="d-reused"/>
+      <text x="770" y="456" text-anchor="middle" class="d-t">Hugging Face (reused)</text>
+      <text x="770" y="476" text-anchor="middle" class="d-s">loads weights · tokenizer · chat template</text>
+      <text x="770" y="493" text-anchor="middle" class="d-s">same driver runs Qwen2.5 AR as block size 1</text>
+    </svg></div>
+    <figcaption>The same pass runs in two modes: <b>denoise passes</b> over the block's 32 positions, and one <b>commit pass</b> per block that writes the finished block's K and V into the cache. The cache is written in place, so shapes never change, and that is what lets the driver record the pass as a CUDA Graph. Every one of our kernels has a PyTorch version it replaces, so each can be switched on separately and checked against it.</figcaption>
+  </figure>
+
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Kernel</th><th>In → out</th><th>What it replaces in the reference</th></tr></thead>
+      <tbody>
+        <tr><td><b>K1</b> parallel selection</td><td>logits (32 × 151,936), mask, τ → tokens, mask, done / end-of-text flag</td><td>full-vocab softmax, gather, boolean indexing, 5+ CPU–GPU syncs per pass</td></tr>
+        <tr><td><b>K2</b> block-causal attention</td><td>queries (1, 32 or 64 rows), static KV cache, cache length → attention output</td><td>copying the whole cache (<code>torch.cat</code>), a 6× copy for shared heads (<code>repeat_kv</code>), attention with a CPU-built mask: ~15× the needed memory traffic</td></tr>
+        <tr><td><b>K3</b> fused small ops</td><td>RMSNorm + residual, RoPE + KV write, SiLU × mul</td><td>most of the ~1,400 kernel launches per pass</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 5. Strategies -->
+<section class="stack-lg" id="strategies">
+  <div class="sec-head prose">
+    <div class="sec-num">5 · SPENDING THE FREE CAPACITY</div>
+    <h2>Fewer passes per answer, not just faster passes</h2>
+    <p>A 64-row pass costs about the same as a 32-row pass on this GPU, and the standard recipe never uses that. These four ideas do. For P2 and P3 we first measure, from recorded traces of real runs, how often the guesses they depend on would be right. That measurement goes in the report whether or not we build the feature.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Idea</th><th>What changes</th><th>Output unchanged?</th><th>Build it if</th></tr></thead>
+      <tbody>
+        <tr><td><b>P1</b> stop on time</td><td>Stop at the first committed end-of-text and skip the last commit pass</td><td>yes</td><td>always (easy, 3–6% of passes)</td></tr>
+        <tr><td><b>P2</b> merge the commit pass</td><td>Run "commit block k" and "first pass of block k+1" as one 64-row pass, using a guessed first token, checked afterwards</td><td>yes, after the check</td><td>the guess is right ≥ ~70% of the time</td></tr>
+        <tr><td><b>P3</b> two steps per pass</td><td>Run this step and a guessed next step together; keep the second half if the guess was right</td><td>yes, after the check</td><td>guesses right ≳ 40% of the time (~1.2–1.45× fewer passes)</td></tr>
+        <tr><td><b>P4</b> smarter commit rules</td><td>For example, commit a position whose guess held for two passes</td><td>no, re-check accuracy</td><td>time allows</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 6. How we judge -->
+<section class="stack-lg" id="judge">
+  <div class="sec-head prose">
+    <div class="sec-num">6 · HOW WE WILL KNOW IT WORKED</div>
+    <h2>Fast engine + dLLM against fast engine + AR</h2>
+    <p>The headline compares our dLLM engine with llama.cpp, the best engine there is for normal models. Our own engine also runs the normal model (as block size 1). If that lands near llama.cpp, it shows our engine is genuinely fast, so any dLLM advantage comes from the decoding method. Accuracy comes from 100 GSM8K math problems, the same 100 for every setting.</p>
+  </div>
+  <figure>
+    <div class="fig-title">Throughput at batch size 1, tokens per second</div>
+    <div class="legend" aria-hidden="true">
+      <span><i style="background: var(--s1)"></i>AR · Qwen2.5-1.5B-Instruct</span>
+      <span><i style="background: var(--s2)"></i>dLLM · Fast-dLLM v2 1.5B, τ = 0.9</span>
+      <span><i class="hatch"></i>projected, not yet measured</span>
+    </div>
+    <div class="scroll-x"><svg class="chart" id="chart-tps" viewBox="0 0 760 345" role="img" aria-label="Measured: llama.cpp AR 64.6, Hugging Face AR 48, reference dLLM 78 on math and 54 on prose tokens per second. Projected for our engine: AR about 70, dLLM about 130 on math and 80 on prose."></svg></div>
+    <figcaption>Solid bars are pilot measurements on the RTX 4060 Laptop. Hatched bars are projections at ~13–15 ms per pass; producing the real numbers is the project. Even if everything works, the win depends on the task: large on math, small on prose.</figcaption>
+  </figure>
+</section>
+
+<!-- 7. Pieces of work -->
+<section class="stack-lg" id="pieces">
+  <div class="sec-head prose">
+    <div class="sec-num">7 · THE PIECES OF WORK</div>
+    <h2>Every piece can start this week</h2>
+    <p>Kernels test on saved real tensors (or random ones of the right shape). Accuracy and profiling run on the reference code, which works today. Strategy analysis reads traces of the reference code. The places where pieces meet (op signatures, the saved-tensor format, the trace format, the results format, the Euler job template) get pinned down first, so nobody waits on anybody.</p>
+  </div>
+  <figure>
+    <div class="fig-title">What each piece hands to the others</div>
+    <div class="scroll-x"><svg class="wide" viewBox="0 0 1000 400" role="img" aria-label="Shared foundations feed every piece. The driver gives kernels an op slot and saved tensors; kernels give back drop-in ops. The driver gives traces to the strategy analysis, which returns new decode rules. The driver feeds speed measurement and accuracy, which feed the report.">
+      <defs><marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-head"/></marker></defs>
+      <text x="90" y="24" text-anchor="middle" class="tick">SHARED</text>
+      <text x="400" y="24" text-anchor="middle" class="tick">BUILD</text>
+      <text x="720" y="24" text-anchor="middle" class="tick">MEASURE</text>
+      <text x="920" y="24" text-anchor="middle" class="tick">TELL</text>
+      <!-- foundations -->
+      <rect x="12" y="40" width="156" height="340" rx="8" class="d-reused"/>
+      <text x="90" y="66" text-anchor="middle" class="d-t">Foundations</text>
+      <text x="90" y="96" text-anchor="middle" class="d-s">environment setup</text>
+      <text x="90" y="116" text-anchor="middle" class="d-s">(Linux / WSL2 / Mac)</text>
+      <text x="90" y="146" text-anchor="middle" class="d-s">saved-tensor format</text>
+      <text x="90" y="176" text-anchor="middle" class="d-s">trace format</text>
+      <text x="90" y="206" text-anchor="middle" class="d-s">results format</text>
+      <text x="90" y="236" text-anchor="middle" class="d-s">Euler job template</text>
+      <text x="90" y="266" text-anchor="middle" class="d-s">GSM8K-100 problem list</text>
+      <text x="90" y="350" text-anchor="middle" class="d-note">used by everyone</text>
+      <line x1="168" y1="210" x2="210" y2="210" class="d-arr" marker-end="url(#ah4)"/>
+      <!-- driver -->
+      <rect x="214" y="150" width="170" height="96" rx="8" style="--k: var(--s1)" class="d-ours"/>
+      <text x="299" y="182" text-anchor="middle" class="d-t">Driver</text>
+      <text x="299" y="202" text-anchor="middle" class="d-s">decode loop · KV cache</text>
+      <text x="299" y="220" text-anchor="middle" class="d-s">CUDA Graph · AR mode</text>
+      <!-- kernels -->
+      <rect x="440" y="40" width="170" height="96" rx="8" style="--k: var(--s2)" class="d-ours"/>
+      <text x="525" y="72" text-anchor="middle" class="d-t">Kernels</text>
+      <text x="525" y="92" text-anchor="middle" class="d-s">K1 selection</text>
+      <text x="525" y="110" text-anchor="middle" class="d-s">K2 attention · K3 fused</text>
+      <path d="M340 150 V 100 H 436" class="d-arr" marker-end="url(#ah4)"/>
+      <text x="334" y="112" text-anchor="end" class="d-s">op slots +</text>
+      <text x="334" y="126" text-anchor="end" class="d-s">saved tensors</text>
+      <path d="M525 136 V 170 H 388" class="d-arr" marker-end="url(#ah4)"/>
+      <text x="396" y="162" class="d-s">drop-in ops</text>
+      <!-- strategies -->
+      <rect x="440" y="276" width="170" height="96" rx="8" style="--k: var(--s5)" class="d-ours"/>
+      <text x="525" y="308" text-anchor="middle" class="d-t">Decoding strategies</text>
+      <text x="525" y="328" text-anchor="middle" class="d-s">hit rates from traces</text>
+      <text x="525" y="346" text-anchor="middle" class="d-s">P1–P4</text>
+      <path d="M340 246 V 300 H 436" class="d-arr" marker-end="url(#ah4)"/>
+      <text x="334" y="290" text-anchor="end" class="d-s">per-pass traces</text>
+      <path d="M525 276 V 262 H 388" class="d-arr" marker-end="url(#ah4)"/>
+      <text x="400" y="256" class="d-s">new decode rules</text>
+      <!-- measure -->
+      <rect x="650" y="60" width="150" height="100" rx="8" style="--k: var(--s3)" class="d-ours"/>
+      <text x="725" y="92" text-anchor="middle" class="d-t">Speed</text>
+      <text x="725" y="112" text-anchor="middle" class="d-s">profiles · knee</text>
+      <text x="725" y="130" text-anchor="middle" class="d-s">waterfall · grid</text>
+      <rect x="650" y="240" width="150" height="100" rx="8" style="--k: var(--s4)" class="d-ours"/>
+      <text x="725" y="272" text-anchor="middle" class="d-t">Accuracy</text>
+      <text x="725" y="292" text-anchor="middle" class="d-s">GSM8K-100</text>
+      <text x="725" y="310" text-anchor="middle" class="d-s">τ sweep on Euler</text>
+      <path d="M384 198 H 620 V 110 H 646" class="d-arr" marker-end="url(#ah4)"/>
+      <path d="M620 198 V 290 H 646" class="d-arr" marker-end="url(#ah4)"/>
+      <text x="628" y="214" class="d-s">engine</text>
+      <!-- tell -->
+      <rect x="846" y="140" width="142" height="116" rx="8" style="--k: var(--s7)" class="d-ours"/>
+      <text x="917" y="176" text-anchor="middle" class="d-t">Report + video</text>
+      <text x="917" y="196" text-anchor="middle" class="d-s">charts from</text>
+      <text x="917" y="214" text-anchor="middle" class="d-s">results files</text>
+      <path d="M800 110 H 822 V 180 H 842" class="d-arr" marker-end="url(#ah4)"/>
+      <path d="M800 290 H 822 V 220 H 842" class="d-arr" marker-end="url(#ah4)"/>
+      <text x="806" y="100" class="d-s">results</text>
+    </svg></div>
+    <figcaption>Before the driver exists, the measurement, accuracy and strategy pieces run on NVIDIA's reference code, and kernels test against saved tensors. When the driver lands, they switch over with no change to how they work.</figcaption>
+  </figure>
+
+  <div class="pieces">
+    <article class="piece" style="--k: var(--s1)">
+      <h3>Driver <span class="tag">ENGINE</span></h3>
+      <p>The program that runs generation: the block loop, the static KV cache, CUDA Graph capture, the op switch, AR mode. Starts with stock PyTorch ops only.</p>
+      <dl><dt>gives</dt><dd>the engine, saved tensors, traces, op slots</dd><dt>needs</dt><dd>nothing to start</dd></dl>
+      <div class="chips"><span class="chip">LLM knowledge: deep</span><span class="chip">local NVIDIA GPU</span></div>
+    </article>
+    <article class="piece" style="--k: var(--s2)">
+      <h3>K1 · Parallel selection <span class="tag">KERNEL</span></h3>
+      <p>Per-row max and sum-of-exp over 151,936 logits, then threshold, forced commit and flags, all on the GPU. Must match the reference's bf16 rounding.</p>
+      <dl><dt>gives</dt><dd>a drop-in op + test + benchmark</dd><dt>needs</dt><dd>op signature, saved logits</dd></dl>
+      <div class="chips"><span class="chip">LLM knowledge: little</span><span class="chip">Euler is enough</span></div>
+    </article>
+    <article class="piece" style="--k: var(--s2)">
+      <h3>K2 · Block-causal attention <span class="tag">KERNEL</span></h3>
+      <p>Attention over the static cache with shared heads, an implicit mask, and the work split along the cache length. The hardest kernel.</p>
+      <dl><dt>gives</dt><dd>a drop-in op + test + benchmark</dd><dt>needs</dt><dd>op signature, saved Q/K/V</dd></dl>
+      <div class="chips"><span class="chip">LLM knowledge: some</span><span class="chip">Euler is enough</span></div>
+    </article>
+    <article class="piece" style="--k: var(--s2)">
+      <h3>K3 · Fused small ops <span class="tag">KERNEL</span></h3>
+      <p>RMSNorm + residual, RoPE + KV write, SiLU × mul. Each is short; together they remove most kernel launches.</p>
+      <dl><dt>gives</dt><dd>three drop-in ops + tests</dd><dt>needs</dt><dd>op signatures, saved tensors</dd></dl>
+      <div class="chips"><span class="chip">LLM knowledge: little</span><span class="chip">Euler is enough</span></div>
+    </article>
+    <article class="piece" style="--k: var(--s5)">
+      <h3>Decoding strategies <span class="tag">RQ3</span></h3>
+      <p>Measure P2/P3 hit rates from traces, then build P1, and P2/P3 if the numbers justify them. The analysis itself needs no GPU.</p>
+      <dl><dt>gives</dt><dd>hit-rate results, new decode rules</dd><dt>needs</dt><dd>traces (reference code works now)</dd></dl>
+      <div class="chips"><span class="chip">LLM knowledge: some</span><span class="chip">analysis on any laptop</span></div>
+    </article>
+    <article class="piece" style="--k: var(--s3)">
+      <h3>Speed measurement <span class="tag">MEASURE</span></h3>
+      <p>Profile the reference (where the 22 ms goes), the cuBLAS knee on all three GPUs, llama.cpp and HF baselines, the waterfall and the final grid.</p>
+      <dl><dt>gives</dt><dd>profiles, timing results</dd><dt>needs</dt><dd>pilot scripts (work now), then the driver</dd></dl>
+      <div class="chips"><span class="chip">LLM knowledge: some</span><span class="chip">4060 + 3090 + Euler</span></div>
+    </article>
+    <article class="piece" style="--k: var(--s4)">
+      <h3>Accuracy on Euler <span class="tag">MEASURE</span></h3>
+      <p>The GSM8K-100 harness: prompt, answer extraction, grading, one Slurm job per setting. Reference sweep first, our engine later.</p>
+      <dl><dt>gives</dt><dd>per-problem results for every setting</dd><dt>needs</dt><dd>nothing to start</dd></dl>
+      <div class="chips"><span class="chip">LLM knowledge: little</span><span class="chip">Euler only</span></div>
+    </article>
+    <article class="piece" style="--k: var(--s7)">
+      <h3>Report + video <span class="tag">TELL</span></h3>
+      <p>Charts generated from results files, the slides, the recording around 12/4, the report by 12/7. Everyone writes their own section.</p>
+      <dl><dt>gives</dt><dd>the deliverables</dd><dt>needs</dt><dd>results from every piece</dd></dl>
+      <div class="chips"><span class="chip">everyone</span><span class="chip">no GPU</span></div>
+    </article>
+  </div>
+</section>
+
+<!-- 8. Timeline -->
+<section class="stack-lg" id="timeline">
+  <div class="sec-head prose">
+    <div class="sec-num">8 · TIMELINE</div>
+    <h2>Three weeks, with a complete result at every stop</h2>
+  </div>
+  <div class="timeline">
+    <div class="tl"><div class="when">11/17 – 11/23</div><div class="what">Foundations + first results</div><ul><li>profile the reference</li><li>driver stage 1</li><li>kernels on saved tensors</li><li>GSM8K harness, reference sweep</li><li>traces, hit rates</li></ul></div>
+    <div class="tl"><div class="when">11/24 – 11/30</div><div class="what">Integrate</div><ul><li>kernels inside the driver</li><li>waterfall chart</li><li>AR mode</li><li>P1, P2; P3 if justified</li><li>Thanksgiving 11/26</li></ul></div>
+    <div class="tl mark"><div class="when">12/1 – 12/2</div><div class="what">Final runs</div><ul><li>full benchmark grid</li><li>charts</li><li><b>results frozen 12/2</b></li></ul></div>
+    <div class="tl mark"><div class="when">12/3 – 12/4</div><div class="what">Present</div><ul><li>slides</li><li><b>record video ~12/4</b></li></ul></div>
+    <div class="tl"><div class="when">12/5 – 12/7</div><div class="what">Write up</div><ul><li>report</li><li><b>due 12/7 23:59</b></li><li>code frozen</li></ul></div>
+  </div>
+</section>
+
+<!-- 9. Glossary -->
+<section class="stack-lg" id="glossary">
+  <div class="sec-head prose">
+    <div class="sec-num">9 · WORDS YOU WILL SEE</div>
+    <h2>Glossary</h2>
+  </div>
+  <dl class="gloss">
+    <div><dt>Token</dt><dd>A piece of text, roughly a word. The vocabulary has 151,936.</dd></div>
+    <div><dt>Weights</dt><dd>The model's fixed numbers: ~1.5 B of them, 3.09 GB. Read in full every pass.</dd></div>
+    <div><dt>Forward pass</dt><dd>One run of the model over its input. Our unit of cost; ~12 ms minimum on the laptop.</dd></div>
+    <div><dt>Logits</dt><dd>The model's score for every vocabulary token at each position.</dd></div>
+    <div><dt>AR (autoregressive)</dt><dd>One token per pass. How normal LLMs work.</dd></div>
+    <div><dt>dLLM (block diffusion)</dt><dd>Fills a 32-token block of blanks over several passes, several tokens per pass.</dd></div>
+    <div><dt>Threshold τ</dt><dd>Confidence a guess needs to be kept. Higher is slower and more accurate.</dd></div>
+    <div><dt>Commit</dt><dd>Keep a guessed token for good. The commit pass saves a finished block into the cache.</dd></div>
+    <div><dt>KV cache</dt><dd>Saved K and V vectors for every past token and layer, so they aren't recomputed.</dd></div>
+    <div><dt>Block-causal attention</dt><dd>A position sees its own block in both directions and earlier blocks only.</dd></div>
+    <div><dt>Grouped-query attention</dt><dd>12 query heads share 2 K/V heads, 6 each.</dd></div>
+    <div><dt>Memory-bound</dt><dd>Time is set by bytes read, not arithmetic. True for us at batch size 1.</dd></div>
+    <div><dt>Kernel</dt><dd>One function launched on the GPU. The reference launches ~1,400 per pass.</dd></div>
+    <div><dt>CUDA Graph</dt><dd>A recording of many kernel launches, replayed with one launch.</dd></div>
+    <div><dt>Driver</dt><dd>Our program that runs the decode loop, owns the cache and replays the graph.</dd></div>
+    <div><dt>cuBLAS</dt><dd>NVIDIA's matrix-multiply library. We use it rather than compete with it.</dd></div>
+    <div><dt>Ablation waterfall</dt><dd>Time per pass after adding each optimization in turn.</dd></div>
+    <div><dt>GSM8K</dt><dd>Grade-school math word problems with one numeric answer. Our accuracy test.</dd></div>
+    <div><dt>llama.cpp</dt><dd>The best existing engine for normal LLMs on consumer hardware. Our AR baseline.</dd></div>
+  </dl>
+</section>
+
+</main>
+
+<footer>
+  <div>Sources: <code>docs/research/pilot-measurements.md</code> (all measured numbers), <code>docs/research/fastdllm-v2-survey.md</code> (reference-code audit), <a href="https://arxiv.org/abs/2509.26328">Fast-dLLM v2 paper</a>, <a href="https://github.com/NVlabs/Fast-dLLM">NVlabs/Fast-dLLM</a>.</div>
+  <div>Team: Sparsh Mishra · Munasib Ilham · M Sadman Sakib · Ayesha Shafique</div>
+</footer>
+
+<div id="tip" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+  var NS = "http://www.w3.org/2000/svg";
+  var tip = document.getElementById("tip");
+
+  function showTip(html, x, y) {
+    tip.innerHTML = html;
+    tip.hidden = false;
+    var w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = Math.min(window.innerWidth - w - 12, x + 14);
+    var top = y - h - 12 < 8 ? y + 16 : y - h - 12;
+    tip.style.left = Math.max(8, left) + "px";
+    tip.style.top = top + "px";
+  }
+  function hideTip() { tip.hidden = true; }
+  function bindTip(node, html) {
+    node.addEventListener("pointerenter", function (e) { showTip(html, e.clientX, e.clientY); });
+    node.addEventListener("pointermove", function (e) { showTip(html, e.clientX, e.clientY); });
+    node.addEventListener("pointerleave", hideTip);
+    node.addEventListener("pointerdown", function (e) { showTip(html, e.clientX, e.clientY); });
+  }
+  document.addEventListener("scroll", hideTip, { passive: true });
+
+  function s(tag, attrs, text) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  /* ---------- Chart: cost vs tokens per pass ---------- */
+  (function knee() {
+    var svg = document.getElementById("chart-knee");
+    var W = 760, H = 340, L = 56, R = 150, T = 20, B = 50;
+    var pw = W - L - R, ph = H - T - B, yMax = 26;
+    var gpu = [[1,10.942],[2,11.293],[4,11.312],[8,11.209],[16,11.265],[32,11.588],[64,11.818],[128,14.296],[256,24.736],[512,46.195]];
+    var cpu = [[1,66.6],[2,73.4],[4,86.6],[8,229.8],[16,420.2],[32,809.3],[64,1682.1]];
+    function x(m) { return L + (Math.log2(m) / 9) * pw; }
+    function y(v) { return T + ph - (v / yMax) * ph; }
+    // free band
+    svg.appendChild(s("rect", { x: x(1), y: T, width: x(64) - x(1), height: ph, class: "band", opacity: "0.6" }));
+    svg.appendChild(s("text", { x: x(1) + 10, y: T + 42, class: "band-t" }, "≤ 64 tokens per pass: GPU cost barely moves"));
+    // grid + y ticks
+    [0, 5, 10, 15, 20, 25].forEach(function (v) {
+      svg.appendChild(s("line", { x1: L, x2: L + pw, y1: y(v), y2: y(v), class: v === 0 ? "ax" : "grid" }));
+      svg.appendChild(s("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end", class: "tick" }, v + "×"));
+    });
+    [1, 2, 4, 8, 16, 32, 64, 128, 256, 512].forEach(function (m) {
+      svg.appendChild(s("text", { x: x(m), y: T + ph + 18, "text-anchor": "middle", class: "tick" }, String(m)));
+    });
+    svg.appendChild(s("text", { x: L + pw / 2, y: H - 8, "text-anchor": "middle", class: "lab" }, "tokens processed per pass (M)"));
+    svg.appendChild(s("text", { x: 14, y: T + ph / 2, "text-anchor": "middle", class: "lab", transform: "rotate(-90 14 " + (T + ph / 2) + ")" }, "time vs 1 token"));
+    function series(data, color, name, unit) {
+      var base = data[0][1];
+      var pts = data.map(function (d) { return x(d[0]) + "," + y(d[1] / base); }).join(" ");
+      svg.appendChild(s("polyline", { points: pts, fill: "none", stroke: color, "stroke-width": "2", "stroke-linejoin": "round", "stroke-linecap": "round" }));
+      data.forEach(function (d) {
+        var r = d[1] / base;
+        svg.appendChild(s("circle", { cx: x(d[0]), cy: y(r), r: "4", fill: color, stroke: "var(--surface)", "stroke-width": "2" }));
+        var hit = s("circle", { cx: x(d[0]), cy: y(r), r: "12", class: "hit" });
+        bindTip(hit, "<b>" + name + "</b><br>" + d[0] + " tokens per pass<br>" + d[1].toFixed(1) + " ms per pass · " + r.toFixed(2) + "× of 1 token");
+        svg.appendChild(hit);
+      });
+      return data[data.length - 1];
+    }
+    var g = series(gpu, "var(--s1)", "GPU · RTX 4060 Laptop");
+    var c = series(cpu, "var(--s2)", "CPU · 16 threads");
+    svg.appendChild(s("text", { x: x(512) + 10, y: y(g[1] / gpu[0][1]) + 4, class: "lab-b" }, "GPU 4.2× at 512"));
+    svg.appendChild(s("text", { x: x(64) + 10, y: y(c[1] / cpu[0][1]) + 4, class: "lab-b" }, "CPU 25× at 64"));
+    svg.appendChild(s("text", { x: x(32), y: y(1.06) - 12, "text-anchor": "middle", class: "val" }, "1.06×"));
+  })();
+
+  /* ---------- Chart: where the time goes ---------- */
+  (function time() {
+    var svg = document.getElementById("chart-time");
+    var W = 760, L = 190, R = 110, T = 14;
+    var pw = W - L - R, xMax = 24;
+    function x(v) { return L + (v / xMax) * pw; }
+    var cols = ["var(--s1)", "var(--s2)", "var(--s3)"];
+    var names = ["matrix multiplies", "other GPU work", "GPU idle, waiting on CPU"];
+    var rows = [
+      { label: "NVIDIA reference", sub: "measured", vals: [11.6, 4.2, 6.5], total: "22.3 ms", est: false, y: T + 20 },
+      { label: "Our engine target", sub: "estimate", vals: [11.6, 2.5, 0.5], total: "≈ 14.5–16 ms", est: true, y: T + 92 }
+    ];
+    [0, 4, 8, 12, 16, 20, 24].forEach(function (v) {
+      svg.appendChild(s("line", { x1: x(v), x2: x(v), y1: T + 6, y2: T + 150, class: v === 0 ? "ax" : "grid" }));
+      svg.appendChild(s("text", { x: x(v), y: T + 168, "text-anchor": "middle", class: "tick" }, v + " ms"));
+    });
+    var defs = s("defs", {});
+    var pat = s("pattern", { id: "hatch-t", width: "6", height: "6", patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
+    pat.appendChild(s("rect", { width: "2.2", height: "6", fill: "var(--surface)", opacity: "0.55" }));
+    defs.appendChild(pat); svg.appendChild(defs);
+    rows.forEach(function (row) {
+      svg.appendChild(s("text", { x: L - 12, y: row.y + 16, "text-anchor": "end", class: "lab-b" }, row.label));
+      svg.appendChild(s("text", { x: L - 12, y: row.y + 32, "text-anchor": "end", class: "tick" }, row.sub));
+      var acc = 0, h = 40;
+      row.vals.forEach(function (v, i) {
+        var x0 = x(acc) + (i ? 1 : 0), x1 = x(acc + v) - 1;
+        var w = Math.max(1, x1 - x0);
+        var rect = s("rect", { x: x0, y: row.y, width: w, height: h, rx: i === 0 ? 4 : 0, fill: cols[i] });
+        if (i === row.vals.length - 1) rect.setAttribute("rx", "4");
+        svg.appendChild(rect);
+        if (row.est) svg.appendChild(s("rect", { x: x0, y: row.y, width: w, height: h, fill: "url(#hatch-t)" }));
+        if (w > 44) svg.appendChild(s("text", { x: x0 + w / 2, y: row.y + 25, "text-anchor": "middle", class: "inval" }, (row.est ? "≈" : "") + v.toFixed(1)));
+        var hit = s("rect", { x: x0, y: row.y - 4, width: Math.max(w, 14), height: h + 8, class: "hit" });
+        bindTip(hit, "<b>" + names[i] + "</b><br>" + row.label + ": " + (row.est ? "≈ " : "") + v.toFixed(1) + " ms" + (row.est ? " (estimate)" : ""));
+        svg.appendChild(hit);
+        acc += v;
+      });
+      svg.appendChild(s("text", { x: x(acc) + 10, y: row.y + 25, class: "val" }, row.total));
+    });
+  })();
+
+  /* ---------- Chart: throughput ---------- */
+  (function tps() {
+    var svg = document.getElementById("chart-tps");
+    var W = 760, L = 280, R = 120, T = 10, rowH = 40, xMax = 140;
+    var pw = W - L - R;
+    function x(v) { return L + (v / xMax) * pw; }
+    var rows = [
+      ["AR", "llama.cpp", 64.6, false],
+      ["AR", "Hugging Face PyTorch", 48, false],
+      ["AR", "our engine", 70, true],
+      ["dLLM", "NVIDIA reference · math", 78, false],
+      ["dLLM", "NVIDIA reference · prose", 54, false],
+      ["dLLM", "our engine · math", 130, true],
+      ["dLLM", "our engine · prose", 80, true]
+    ];
+    var defs = s("defs", {});
+    ["s1", "s2"].forEach(function (k) {
+      var p = s("pattern", { id: "hatch-" + k, width: "6", height: "6", patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" });
+      p.appendChild(s("rect", { width: "6", height: "6", fill: "color-mix(in srgb, var(--" + k + ") 18%, var(--surface))" }));
+      p.appendChild(s("rect", { width: "2.2", height: "6", fill: "var(--" + k + ")" }));
+      defs.appendChild(p);
+    });
+    svg.appendChild(defs);
+    var H = T + rows.length * rowH + 4;
+    [0, 20, 40, 60, 80, 100, 120, 140].forEach(function (v) {
+      svg.appendChild(s("line", { x1: x(v), x2: x(v), y1: T, y2: H, class: v === 0 ? "ax" : "grid" }));
+      svg.appendChild(s("text", { x: x(v), y: H + 18, "text-anchor": "middle", class: "tick" }, String(v)));
+    });
+    svg.appendChild(s("text", { x: L + pw / 2, y: H + 40, "text-anchor": "middle", class: "lab" }, "tokens per second (higher is faster)"));
+    rows.forEach(function (r, i) {
+      var y0 = T + i * rowH + 8, h = rowH - 16;
+      var k = r[0] === "AR" ? "s1" : "s2";
+      svg.appendChild(s("text", { x: L - 12, y: y0 + h / 2 + 4, "text-anchor": "end", class: r[3] ? "lab" : "lab-b" }, r[0] + " · " + r[1]));
+      var w = x(r[2]) - x(0);
+      var bar = s("rect", { x: x(0), y: y0, width: w, height: h, rx: "4", fill: r[3] ? "url(#hatch-" + k + ")" : "var(--" + k + ")" });
+      if (r[3]) { bar.setAttribute("stroke", "var(--" + k + ")"); bar.setAttribute("stroke-dasharray", "4 3"); bar.setAttribute("stroke-width", "1.2"); }
+      svg.appendChild(bar);
+      svg.appendChild(s("text", { x: x(r[2]) + 8, y: y0 + h / 2 + 4, class: "val" }, (r[3] ? "≈ " : "") + r[2] + (r[3] ? " projected" : "")));
+      var hit = s("rect", { x: x(0), y: y0 - 6, width: Math.max(w, 20), height: h + 12, class: "hit" });
+      bindTip(hit, "<b>" + r[0] + " · " + r[1] + "</b><br>" + (r[3] ? "projected ≈ " : "measured ") + r[2] + " tok/s");
+      svg.appendChild(hit);
+    });
+  })();
+
+  /* ---------- Block decoder ---------- */
+  (function decoder() {
+    var toks = ["She","eats","3","for","breakfast","and","bakes","with",
+                "4",",","so","she","uses","3","+","4",
+                "=","7","eggs",".","That","leaves","16","-",
+                "7","=","9","eggs","to","sell","at","$2"];
+    var passes = [[1,2],[3],[4,5,6],[7],[8,9],[10],[11,12],[13],[14,15],[16,17,18],[19],[20,21],[22,23],[24],[25,26],[27,28,29],[30,31]];
+    var total = passes.length + 1; // + commit pass
+    var step = 0, timer = null;
+    var blockEl = document.getElementById("block");
+    var readout = document.getElementById("readout");
+    var msg = document.getElementById("dec-msg");
+    var bPrev = document.getElementById("b-prev"), bNext = document.getElementById("b-next");
+    var bPlay = document.getElementById("b-play"), bReset = document.getElementById("b-reset");
+    var cells = [];
+    for (var g = 0; g < 4; g++) {
+      var row = document.createElement("div");
+      row.className = "subrow";
+      var rl = document.createElement("div");
+      rl.className = "rl";
+      rl.textContent = "group " + (g + 1);
+      row.appendChild(rl);
+      for (var j = 0; j < 8; j++) {
+        var c = document.createElement("div");
+        c.className = "cell";
+        row.appendChild(c);
+        cells.push(c);
+      }
+      blockEl.appendChild(row);
+    }
+    function groupOf(p) { return Math.floor(p / 8); }
+    function render() {
+      var filled = { 0: true }, fresh = {};
+      for (var i = 0; i < Math.min(step, passes.length); i++) {
+        passes[i].forEach(function (p) { filled[p] = true; if (i === step - 1) fresh[p] = true; });
+      }
+      var liveGroup = 4;
+      for (var p = 1; p < 32; p++) { if (!filled[p]) { liveGroup = groupOf(p); break; } }
+      cells.forEach(function (c, p) {
+        if (p === 0) { c.className = "cell given"; c.textContent = toks[0]; return; }
+        if (fresh[p]) { c.className = "cell new"; c.textContent = toks[p]; return; }
+        if (filled[p]) { c.className = "cell done"; c.textContent = toks[p]; return; }
+        c.className = "cell mask" + (groupOf(p) === liveGroup ? " live" : "");
+        c.textContent = "MASK";
+      });
+      blockEl.classList.toggle("committed", step === total);
+      var nFilled = Object.keys(filled).length - 1;
+      var denoise = Math.min(step, passes.length);
+      readout.innerHTML =
+        "<span>pass <b>" + step + "</b> / " + total + "</span>" +
+        "<span>filled <b>" + nFilled + "</b> / 31</span>" +
+        "<span>this pass <b>" + (step >= 1 && step <= passes.length ? passes[step - 1].length : 0) + "</b></span>" +
+        "<span>average <b>" + (denoise ? (nFilled / denoise).toFixed(2) : "–") + "</b> per denoise pass</span>";
+      if (step === 0) msg.textContent = "The block starts with one known token and 31 blanks. Only the first group of 8 is eligible.";
+      else if (step <= passes.length) {
+        var n = passes[step - 1].length;
+        msg.textContent = n === 1
+          ? "Only one guess was confident enough, so the most confident blank is committed. Each pass always makes progress."
+          : n + " guesses cleared the threshold together, all for the price of one pass.";
+        if (step === passes.length) msg.textContent += " The block is full.";
+      } else {
+        msg.textContent = "Commit pass: the finished block's K and V go into the KV cache, and this pass also yields the first token of the next block. Total: 32 tokens from 18 passes (1.78 per pass). A normal model needs 32.";
+      }
+      bPrev.disabled = step === 0;
+      bNext.disabled = step === total;
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } bPlay.textContent = "Play"; }
+    bNext.addEventListener("click", function () { stop(); if (step < total) { step++; render(); } });
+    bPrev.addEventListener("click", function () { stop(); if (step > 0) { step--; render(); } });
+    bReset.addEventListener("click", function () { stop(); step = 0; render(); });
+    bPlay.addEventListener("click", function () {
+      if (timer) { stop(); return; }
+      if (step === total) step = 0;
+      bPlay.textContent = "Pause";
+      timer = setInterval(function () { if (step < total) { step++; render(); } else stop(); }, 700);
+      render();
+    });
+    render();
+  })();
+})();
+</script>
