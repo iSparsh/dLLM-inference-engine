@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dllm"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+ "torch==2.14.1", "transformers==4.53.3", "huggingface_hub==0.36.2", "einops==0.8.2",
+ "safetensors", "accelerate", "pyarrow", "numpy", "pytest", "ninja", "matplotlib",
+ "nvidia-ml-py; sys_platform == 'linux'", "setuptools",
+]
+
+[tool.setuptools.packages.find]
+include = ["dllm*"]
+
+[tool.setuptools.data-files]
+"share/dllm/csrc" = ["csrc/*.cu", "csrc/*.cpp", "csrc/*.h"]
+
+[tool.uv]
+environments = [
+ "sys_platform == 'linux' and platform_machine == 'x86_64'",
+ "sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+
+[[tool.uv.index]]
+name = "cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "cu130", marker = "sys_platform == 'linux'" }]
+
+[tool.pytest.ini_options]
+markers = ["slow: requires locally cached model weights and an NVIDIA GPU"]

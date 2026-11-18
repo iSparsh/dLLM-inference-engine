@@ -21,6 +21,10 @@ data/
 hf_cache/
 models/
 
+# Generated artifacts (golden tensors, traces, scratch results)
+artifacts/
+traces/
+
 # Slurm / profiler outputs
 *.out
 *.err
@@ -38,3 +42,4 @@ docs/*.pptx
 .vscode/
 .idea/
 .DS_Store
+mac-env-report-*.txt
