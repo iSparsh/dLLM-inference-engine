@@ -1,0 +1,471 @@
+[
+ {
+  "prompt": 98,
+  "new_tokens": 144,
+  "forwards": 145,
+  "m_hist": {
+   "32": 144,
+   "96": 1
+  },
+  "tok_per_fwd": 0.993103448275862,
+  "ms_per_fwd": 23.296676958620836,
+  "tok_s": 42.62854526591048,
+  "secs": 3.378018159000021,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 - 4 = 9 eggs left.\n4. Janet sells the remainder at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 per day.\n\nSo the answer is \\boxed{18} dollars every day at the farmers' market.\n#### 18",
+  "prompt_name": "gsm8k",
+  "threshold": 1.0,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 144,
+  "forwards": 88,
+  "m_hist": {
+   "32": 87,
+   "96": 1
+  },
+  "tok_per_fwd": 1.6363636363636365,
+  "ms_per_fwd": 21.95245985227633,
+  "tok_s": 74.5412426386447,
+  "secs": 1.931816467000317,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 - 4 = 9 eggs left.\n4. Janet sells the remainder at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 per day.\n\nSo the answer is \\boxed{18} dollars every day at the farmers' market.\n#### 18",
+  "prompt_name": "gsm8k",
+  "threshold": 0.95,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 144,
+  "forwards": 83,
+  "m_hist": {
+   "32": 82,
+   "96": 1
+  },
+  "tok_per_fwd": 1.7349397590361446,
+  "ms_per_fwd": 22.047173445779585,
+  "tok_s": 78.69216266216013,
+  "secs": 1.8299153959997057,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 - 4 = 9 eggs left.\n4. Janet sells the remainder at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 per day.\n\nSo the answer is \\boxed{18} dollars every day at the farmers' market.\n#### 18",
+  "prompt_name": "gsm8k",
+  "threshold": 0.9,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 150,
+  "forwards": 67,
+  "m_hist": {
+   "32": 66,
+   "96": 1
+  },
+  "tok_per_fwd": 2.2388059701492535,
+  "ms_per_fwd": 22.62198705969905,
+  "tok_s": 98.96592921926272,
+  "secs": 1.5156731329998365,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 eggs - 4 eggs = 9 eggs left.\n4. Janet sells the remainder at the farmers' market daily for $2 per fresh duck egg, so she makes 9 eggs * $2 per egg = $18 per day.\n\nTherefore, Janet makes $18 every day at the farmers' market.\n\nFinal answer: \\boxed{18}",
+  "prompt_name": "gsm8k",
+  "threshold": 0.7,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 130,
+  "forwards": 48,
+  "m_hist": {
+   "32": 47,
+   "96": 1
+  },
+  "tok_per_fwd": 2.7083333333333335,
+  "ms_per_fwd": 22.05839529167027,
+  "tok_s": 122.78016136359923,
+  "secs": 1.058802974000173,
+  "text": "Sure! Janet's ducks lay 16 eggs per day. She eats 3 breakfast eggs every morning, so she has 16 - 3 = 13 eggs left for baking muffins. She bakes muffins for her friends every day, so she uses 4 eggs eggs for baking muffins. So she has 13 - 4 = 9 eggs left for selling at the farmers' market. She sells each egg egg egg $2, so she makes 9 * 2 = $18 every day at the farmers' market.\n\nSo, Janet answer is \\boxed{18} dollars.",
+  "prompt_name": "gsm8k",
+  "threshold": 0.5,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 144,
+  "forwards": 145,
+  "m_hist": {
+   "8": 115,
+   "32": 29,
+   "96": 1
+  },
+  "tok_per_fwd": 0.993103448275862,
+  "ms_per_fwd": 22.26300157241173,
+  "tok_s": 44.60779670907062,
+  "secs": 3.228135227999701,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 - 4 = 9 eggs left.\n4. Janet sells the remainder at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 per day.\n\nSo the answer is \\boxed{18} dollars every day at the farmers' market.\n#### 18",
+  "prompt_name": "gsm8k",
+  "threshold": 1.0,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 144,
+  "forwards": 90,
+  "m_hist": {
+   "8": 65,
+   "32": 24,
+   "96": 1
+  },
+  "tok_per_fwd": 1.6,
+  "ms_per_fwd": 22.164731266669452,
+  "tok_s": 72.18675384555752,
+  "secs": 1.9948258140002508,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 - 4 = 9 eggs left.\n4. Janet sells the remainder at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 per day.\n\nSo the answer is \\boxed{18} dollars every day at the farmers' market.\n#### 18",
+  "prompt_name": "gsm8k",
+  "threshold": 0.95,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 144,
+  "forwards": 83,
+  "m_hist": {
+   "8": 58,
+   "32": 24,
+   "96": 1
+  },
+  "tok_per_fwd": 1.7349397590361446,
+  "ms_per_fwd": 22.35227584337571,
+  "tok_s": 77.61803635535881,
+  "secs": 1.8552388950001841,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 - 4 = 9 eggs left.\n4. Janet sells the remainder at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 per day.\n\nSo the answer is \\boxed{18} dollars every day at the farmers' market.\n#### 18",
+  "prompt_name": "gsm8k",
+  "threshold": 0.9,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 183,
+  "forwards": 86,
+  "m_hist": {
+   "8": 56,
+   "32": 29,
+   "96": 1
+  },
+  "tok_per_fwd": 2.127906976744186,
+  "ms_per_fwd": 22.592978500005152,
+  "tok_s": 94.18443773332943,
+  "secs": 1.9429961510004432,
+  "text": "Sure! Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg.\n\nFirst, we need to calculate how many eggs Janet eats for breakfast and bakes muffins each day: 3 eggs for breakfast + 4 eggs for muffins = 7 eggs\n\nNext, we need to calculate how many eggs Janet sells at the farmers' market each day: 16 eggs per day - 7 eggs = 9 eggs\n\nFinally, we can calculate how much Janet makes every day at the farmers' market: 9 eggs * $2 per fresh duck egg = $18\n\nSo, Janet makes $18 every day at the farmers' market.\n\nAnswer: \\boxed{18}\n####\n18",
+  "prompt_name": "gsm8k",
+  "threshold": 0.7,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 126,
+  "forwards": 42,
+  "m_hist": {
+   "8": 22,
+   "32": 19,
+   "96": 1
+  },
+  "tok_per_fwd": 3.0,
+  "ms_per_fwd": 22.676076380949304,
+  "tok_s": 132.29801971033973,
+  "secs": 0.9523952079998708,
+  "text": "Sure! Janet's ducks lay 16 eggs per day. She eats 3 breakfast eggs every morning, so she has 16 - 3 = 13 eggs left for baking muffins. She bakes 4 muffins for her friends, so she has 13 - 4 = 9 eggs eggs left for selling at the farmers' market. She sells each egg egg egg $2, so she makes 9 * 9 = $18 every day at the farmers' market.\n\nSo, the answer is \\boxed{18} dollars every day at the farmers' market.\n",
+  "prompt_name": "gsm8k",
+  "threshold": 0.5,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 157,
+  "forwards": 96,
+  "m_hist": {
+   "4": 48,
+   "32": 47,
+   "96": 1
+  },
+  "tok_per_fwd": 1.6354166666666667,
+  "ms_per_fwd": 23.39666870832957,
+  "tok_s": 69.89955224200074,
+  "secs": 2.246080195999639,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left after breakfast.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 - 4 = 9 eggs left after baking muffins.\n4. Janet sells the remaining eggs at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 every day at the farmers' market.\n\nSo the final answer is \\boxed{18} dollars every day at the farmers' market.\n#### 18",
+  "prompt_name": "gsm8k",
+  "threshold": 0.9,
+  "small_block": 4,
+  "block_cache": true
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 154,
+  "forwards": 80,
+  "m_hist": {
+   "16": 65,
+   "32": 14,
+   "96": 1
+  },
+  "tok_per_fwd": 1.925,
+  "ms_per_fwd": 23.228453174999686,
+  "tok_s": 82.87250061368006,
+  "secs": 1.8582762539999749,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left per day.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 - 4 = 9 eggs left per day.\n4. Janet sells the remaining eggs at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 every day at the farmers' market.\n\nSo the answer is \\boxed{18} dollars every day at the farmers' market.\n#### 18",
+  "prompt_name": "gsm8k",
+  "threshold": 0.9,
+  "small_block": 16,
+  "block_cache": true
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 154,
+  "forwards": 74,
+  "m_hist": {
+   "32": 73,
+   "96": 1
+  },
+  "tok_per_fwd": 2.081081081081081,
+  "ms_per_fwd": 22.014876351341947,
+  "tok_s": 94.53067316247842,
+  "secs": 1.629100849999304,
+  "text": "Sure! Let's break down the problem step by step.\n\n1. Janet's ducks lay 16 eggs per day.\n2. Janet eats 3 eggs for breakfast every morning, so she has 16 - 3 = 13 eggs left per day.\n3. Janet bakes muffins for her friends every day with 4 eggs, so she has 13 - 4 = 9 eggs left per day.\n4. Janet sells the remaining eggs at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 every day at the farmers' market.\n\nSo the answer is \\boxed{18} dollars every day at the farmers' market.\n#### 18",
+  "prompt_name": "gsm8k",
+  "threshold": 0.9,
+  "small_block": 32,
+  "block_cache": true
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 228,
+  "m_hist": {
+   "32": 228
+  },
+  "tok_per_fwd": 1.0,
+  "ms_per_fwd": 22.586517793857446,
+  "tok_s": 44.27419972953762,
+  "secs": 5.149726056999498,
+  "text": "Large language models (LLMs) are advanced artificial intelligence systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various natural language processing (NLP) tasks. Here's a brief introduction:\n\n1. **Training Data**: LLMs are typically trained on large datasets, such as the internet, books, articles, and websites. This data is often diverse, extensive, and unstructured, allowing the model to learn patterns, structures, and relationships in language.\n\n2. **Architecture**: LLMs are based on transformer architectures, which include models like BERT, GPT, and T5. These models use self-attention mechanisms to capture long-range dependencies in text, enabling them to understand the context of words and phrases.\n\n3. **Key Capabilities**: LLMs can perform tasks like:\n   - **Text Generationization**: They can generate text that is contextually relevant and coherent, such as writing articles, translating languages, or generating code snippets.\n   - **Summarization**: They can condense longer texts into shorter summaries, making it easier to grasp the main ideas.\n",
+  "prompt_name": "intro",
+  "threshold": 1.0,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 205,
+  "m_hist": {
+   "32": 205
+  },
+  "tok_per_fwd": 1.1121951219512196,
+  "ms_per_fwd": 22.625835360978694,
+  "tok_s": 49.15598050666232,
+  "secs": 4.638296249000632,
+  "text": "Large language models (LLMs) are advanced artificial intelligence systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various natural language processing (NLP) tasks. Here's a brief introduction:\n\n1. **Training Data**: LLMs are typically trained on large datasets, such as the internet, books, articles, and websites. This data is often diverse, extensive, and unstructured, allowing the model to learn patterns, structures, and relationships in language.\n\n2. **Architecture**: LLMs are based on transformer architectures, which include models like BERT, GPT, and T5. These models use self-attention mechanisms to capture long-range dependencies in text, enabling them to understand the context of words and phrases.\n\n3. **Key Capabilities**: LLMs can perform tasks like:\n   - **Text Generationization**: They can generate text that is contextually relevant and coherent, such as writing articles, translating languages, or generating code snippets.\n   - **Summarization**: They can condense longer texts into shorter summaries, making it easier to grasp the main ideas.\n",
+  "prompt_name": "intro",
+  "threshold": 0.95,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 181,
+  "m_hist": {
+   "32": 181
+  },
+  "tok_per_fwd": 1.2596685082872927,
+  "ms_per_fwd": 22.356291121548928,
+  "tok_s": 56.345146940456296,
+  "secs": 4.046488693000356,
+  "text": "Large language models (LLMs) are advanced artificial intelligence systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various natural language processing (NLP) tasks. Here's a brief introduction:\n\n1. **Training Data**: LLMs are typically trained on large datasets, such as the internet, books, articles, and websites. This data is often diverse, extensive, and unstructured, allowing the model to learn patterns, structures, and relationships in language.\n\n2. **Architecture**: LLMs are based on transformer architectures, which include models like BERT, GPT-3, and T5. These models use self-attention mechanisms to capture the relationships between words in a sequence, enabling them to understand contextually and generate coherent text.\n\n3. **Performance**: LLMs are highly effective in various NLP tasks, including:\n   - **Text Classificationization**: Classifying text into predefined categories.\n   - **Named Entity Recognition**: Identifying and categorizing key entities in the text, such as people, organizations, and locations.\n   - **Summarization**: Generating a",
+  "prompt_name": "intro",
+  "threshold": 0.9,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 163,
+  "m_hist": {
+   "32": 163
+  },
+  "tok_per_fwd": 1.3987730061349692,
+  "ms_per_fwd": 23.45350055214564,
+  "tok_s": 59.640265768642486,
+  "secs": 3.8229205899997396,
+  "text": "Large language models (LLMs) are advanced artificial intelligence systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various language-related tasks with impressive accuracy. They are based on deep learning techniques, such as transformer architectures, which allow them to capture complex relationships between words and phrases in a text.\n\nSome key features of LLMs include:\n\n1. **Generative capabilities**: LLMs can generate text that is coherent, contextually appropriate, and often impressive. They can be used for tasks like text completion, summarization, and translation.\n\n2. **Context understanding**: LLMs can understand the context of a text, allowing them to generate responses that are relevant and appropriate to the conversation or situation.\n\n3. **Multilingual support**: LLMs can be trained to understand and generate text in multiple languages, making them useful for cross-lingual communication.\n\n4. **Zero-shot and few-shot learning**: LLMs can be trained to perform tasks with minimal or no additional data, making them adaptable to new domains and tasks.\n\n5. **Ethical concerns**: LLMs have",
+  "prompt_name": "intro",
+  "threshold": 0.7,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 211,
+  "forwards": 118,
+  "m_hist": {
+   "32": 118
+  },
+  "tok_per_fwd": 1.7881355932203389,
+  "ms_per_fwd": 22.569444516948813,
+  "tok_s": 79.22816141431906,
+  "secs": 2.66319445299996,
+  "text": "Large language models (LLMs) are advanced types of artificial intelligence that have trained on massive amounts of text data, enabling them to generate human-like text and text-like-like text. They are based on deep learning techniques, such as transformer models, and can perform various natural language processing language processing, tasks, including language translation, text summarization, question analysis, and text generation.One of the key features of LLMs is their ability to understand and generate contextually appropriate responses, making them useful for various applications, such as chatbots, virtual assistants, and content creation. However, LLMs can also be used for malicious purposes, such as generating fake news misleading information, or even disinformation. Therefore, it is crucial to use LLMs eth and and with proper oversight and regulation.\n\nIn summary, large language models are powerful powerful tools that can perform various natural language processing tasks, but they can also be used for malicious purposes. It is essential to use them responsibly and and with proper oversight and regulation to ensure their safe and.",
+  "prompt_name": "intro",
+  "threshold": 0.5,
+  "small_block": 8,
+  "block_cache": false
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 228,
+  "m_hist": {
+   "8": 171,
+   "32": 57
+  },
+  "tok_per_fwd": 1.0,
+  "ms_per_fwd": 22.7974481359652,
+  "tok_s": 43.8645586135758,
+  "secs": 5.197818175000066,
+  "text": "Large language models (LLMs) are advanced artificial intelligence systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various natural language processing (NLP) tasks with remarkable accuracy and flu. Here's a brief introduction to LLMs:\n\n1. **Architecture**: LLMs are typically based on deep learning architectures, such as Transformer models (e.g., GPT, BERT, T5) or recurrent neural networks (RNNs). They consist of many layers of interconnected nodes (units) and edges (connections) that process and transmit information.\n\n2. **Training Data**: LLMs are trained on massive datasets, often ranging billions to trillions of words, from various sources like books, articles, websites, and social media. This extensive training allows the models to learn the underlying patterns, structures, and relationships in human language.\n\n3. **Performance**: LLMs can perform numerous NLP tasks, such as text generation, question-answering, sentiment analysis, machine translation, and text summarization. They can generate text that is contextually relevant, coherent, and",
+  "prompt_name": "intro",
+  "threshold": 1.0,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 202,
+  "m_hist": {
+   "8": 150,
+   "32": 52
+  },
+  "tok_per_fwd": 1.1287128712871286,
+  "ms_per_fwd": 22.260239039600368,
+  "tok_s": 50.70533471267667,
+  "secs": 4.496568285999274,
+  "text": "Large language models (LLMs) are advanced artificial intelligence systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various natural language processing (NLP) tasks with remarkable accuracy and flu. Here's a brief introduction to LLMs:\n\n1. **Architecture**: LLMs are typically based on deep learning architectures, such as Transformer models (e.g., GPT-3, BERT) or recurrent neural networks (RNNs). They consist of many layers of interconnected nodes (called \"tokens\") and connections (called \"weights\") that allow the model to learn and generate text based on the patterns it has learned.\n\n2. **Training**: LLMs are trained on large datasets, such as the Common Crawl corpus, which contains billions of pages of text. The training process involves updating the model's weights to minimize the difference between the model's predictions and the actual text. This process allows the model to learn the statistical patterns and relationships between words in a given language.\n\n3. **Performance**: LLMs have shown impressive performance in various NLP tasks, such as text completion",
+  "prompt_name": "intro",
+  "threshold": 0.95,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 194,
+  "m_hist": {
+   "8": 145,
+   "32": 49
+  },
+  "tok_per_fwd": 1.175257731958763,
+  "ms_per_fwd": 22.327280541236348,
+  "tok_s": 52.63774644602035,
+  "secs": 4.331492424999851,
+  "text": "Large language models (LLMs) are advanced artificial intelligence systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various natural language processing (NLP) tasks with remarkable accuracy and flu. Here's a brief introduction to LLMs:\n\n1. **Architecture**: LLMs are typically based on deep learning architectures, such as Transformer models (e.g., GPT-3, BERT) or recurrent neural networks (RNNs). They consist of many layers of interconnected nodes (called \") and connections (called \"links\") that process and manipulate data.\n\n2. **Training**: LLMs are trained on massive datasets, often containing billions or even trillions of words. This training process allows the model to learn the patterns and relationships between words, phrases, and sentences, enabling it to generate text that is coherent, contextually appropriate, and relevant.\n\n3. **Performance**: LLMs have demonstrated impressive performance in various NLP tasks, including:\n   - **Text summarization**: Condizing long documents into shorter, more concise versions.\n   - **Sent analysis**: Determining",
+  "prompt_name": "intro",
+  "threshold": 0.9,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 161,
+  "m_hist": {
+   "8": 115,
+   "32": 46
+  },
+  "tok_per_fwd": 1.4161490683229814,
+  "ms_per_fwd": 23.437582807453296,
+  "tok_s": 60.42214676987242,
+  "secs": 3.7734508319999804,
+  "text": "Large language models (LLMs) are advanced artificial intelligence systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various language-related tasks with impressive accuracy. Here's a brief introduction:\n\n1. **Architecture**: LLMs are typically based on deep learning architectures, such as recurrent neural networks (RNNs), long short-term memory (LSTM) networks, or transformer models like BERT, GPT-3, or T5. These models are designed to process and generate sequences of tokens, like words or subwords.\n\n2. **Training Data**: LLMs are trained on massive datasets, often comprising billions or even of trillions of words. These datasets can include books, articles, websites, and other text sources. The training process allows the model to learn the underlying patterns, structures, and relationships in the data.\n\n3. **Performance**: LLMs are highly effective in various language processing tasks, such as:\n   - **Text Generation**: They can generate human-like text, like stories, poems, or articles.\n   - **Translation**: They can translate text between languages",
+  "prompt_name": "intro",
+  "threshold": 0.7,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 133,
+  "forwards": 74,
+  "m_hist": {
+   "8": 51,
+   "32": 23
+  },
+  "tok_per_fwd": 1.7972972972972974,
+  "ms_per_fwd": 25.17967571621567,
+  "tok_s": 71.37888976623479,
+  "secs": 1.8632960029999595,
+  "text": "Large language models (LLMs) are advanced types of artificial intelligence that have trained on massive amounts of text data, enabling them to perform various natural language processing (NLP) tasks with remarkable accuracy. They are based on deep learning techniques, such as transformer architectures, which allow them to understand and generate human-like text. Some of the most well LLM include include GPT-3, BERT, and T5. LLMs can perform tasks like language translation,, summarization, question-ansering, and text generation with impressive precision. However, they also raise ethical concerns, such as potential biases in training data and the risk for misuse.",
+  "prompt_name": "intro",
+  "threshold": 0.5,
+  "small_block": 8,
+  "block_cache": true
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 198,
+  "m_hist": {
+   "4": 116,
+   "32": 82
+  },
+  "tok_per_fwd": 1.1515151515151516,
+  "ms_per_fwd": 22.636008550504968,
+  "tok_s": 50.87094524398663,
+  "secs": 4.481929692999984,
+  "text": "Large language models (LLMs) are advanced artificial intelligence systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various natural language processing (NLP) tasks. Here's a brief introduction:\n\n1. **Training Data**: LLMs are typically trained on large datasets, such as the internet, books, articles, and websites. This data is diverse and extensive, allowing the model to learn patterns, relationships, and structures in language. Examples include GPT-3, BERT, and T5.\n\n2. **Architecture**: LLMs are based on transformer architectures, which include techniques like attention mechanisms, self-attention, and recurrent neural. They consist of multiple layers, each with its own set of parameters, that can learn and generate text based on the input.\n\n3. **Key Capabilities**: LLMs excel at understanding and generating language. They can perform tasks like:\n\n   - **Text Tokenization**: Breaking down text into smaller units (subwords, tokens, or characters) for processing.\n   - **Context Understanding**: Understanding the context of words and phrases to generate coherent",
+  "prompt_name": "intro",
+  "threshold": 0.9,
+  "small_block": 4,
+  "block_cache": true
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 228,
+  "forwards": 192,
+  "m_hist": {
+   "16": 169,
+   "32": 23
+  },
+  "tok_per_fwd": 1.1875,
+  "ms_per_fwd": 22.765259921873355,
+  "tok_s": 52.1628131668738,
+  "secs": 4.370929904999684,
+  "text": "Large language models (LLMs) are advanced artificial intelligence (AI) systems that have trained on massive amounts of text data, enabling them to generate human-like text and perform various natural language processing (NLP) tasks. Here's a brief introduction:\n\n1. **Architecture**: LLMs are typically based on deep learning architectures, such as recurrent neural networks (RNNs), long short-term memory (LSTM) networks, or transformer models like GPT-3. These models are designed to process and generate sequences of tokens, like words or subwords.\n\n2. **Training Data**: LLMs are trained on massive datasets, often exceeding the size of a single book. This data can include books, articles, websites, and other sources. The training process involves teaching the model to predict the next token in a sequence, which helps it learn the structure and patterns of human language.\n\n3. **Performance**: LLMs are known for their ability to perform NLP tasks with impressive accuracy. They can generate human text, translate between languages, summarize text, and even answer questions about the context. Some models, like GPT",
+  "prompt_name": "intro",
+  "threshold": 0.9,
+  "small_block": 16,
+  "block_cache": true
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 105,
+  "forwards": 88,
+  "m_hist": {
+   "32": 88
+  },
+  "tok_per_fwd": 1.1931818181818181,
+  "ms_per_fwd": 23.939018693175225,
+  "tok_s": 49.84255342605094,
+  "secs": 2.1066336449994196,
+  "text": "Large language models (LLMs) are advanced artificial intelligence (AI) systems that have trained on massive amounts of text data to generate human-like text. They are capable of understanding and generating human language, making them useful for various applications like natural language processing (NLP), content generation, and language translation. LLMs are based on deep learning techniques, such as transformer models, and can process and generate complex patterns of language. Some popular LLMs include GPT-3, BERT, and T5.",
+  "prompt_name": "intro",
+  "threshold": 0.9,
+  "small_block": 32,
+  "block_cache": true
+ }
+]

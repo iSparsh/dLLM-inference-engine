@@ -1,0 +1,4 @@
+torch.profiler, one forward pass, transformers 4.53.3 eager, bf16
+Fast-dLLM v2 forward, M=32 (no prefix cache):            1364 kernels, GPU-busy 15.8 ms  (wall ~22.5 ms in generate loop)
+Fast-dLLM v2 forward, M=32 with 96-token prefix cache:   1420 kernels, GPU-busy 16.2 ms
+Qwen2.5 HF AR decode step, M=1 with 96-token cache:      1196 kernels, GPU-busy 14.4 ms  (wall ~21 ms in generate loop)

@@ -1,0 +1,28 @@
+Qwen2.5-1.5B-Instruct                    BFCL-simple n=30: JSON-valid 100%  name 100%  AST acc 77%  0.67s/item  tok/fwd 1.00
+     '<tool_call>\n{"name": "calculate_triangle_area", "arguments": {"base": 10, "height": 5}}\n</tool_call>'
+     '<tool_call>\n{"name": "math.factorial", "arguments": {"number": 5}}\n</tool_call>'
+     '<tool_call>\n{"name": "math.hypot", "arguments": {"x": 4, "y": 5}}\n</tool_call>'
+Qwen2.5-1.5B-Instruct                    GSM8K n=20: EM 55%  6.05s/item  273 tok/item  tok/fwd 1.00
+     "ue from selling the eggs at the farmers' market = Number of eggs sold * Price per egg\n   = 9 * $2 = $18\n\nTherefore, Janet makes $18 every day at the farmers' market.\n\nThe final answer is: $\\boxed{18}$"
+     ' find the total number of bolts:**\n   - Total bolts of fiber = Blue fiber + White fiber\n   - Total bolts = \\(2 + 1 = 3\\)\n\nThus, the total number of bolts of fiber needed for one robe is \\(\\boxed{3}\\).'
+Fast_dLLM_v2_1.5B@thr1.0                 BFCL-simple n=30: JSON-valid 3%  name 0%  AST acc 0%  3.00s/item  tok/fwd 0.99
+     'To find the area of a triangle, you can use the formula:\n\nArea = (1/2) * base * height\n\nIn this case, the base is 10 units and the height is 5 units. Plugging these values into the formula, we get:\n\nA'
+     '```python\nimport math\n\nresult = math.factorial(5)\nprint(result)\n```\n\nThis code imports the math module and then uses the math.factorial() function to calculate the factorial of 5. The result is then p'
+     'To calculate the hypotenuse of a right triangle given the lengths of the other two sides, you can use the Pythagorean theorem. The theorem states that in a right triangle, the square of the length of '
+Fast_dLLM_v2_1.5B@thr1.0                 GSM8K n=20: EM 45%  6.41s/item  236 tok/item  tok/fwd 0.99
+     "eggs at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 every day.\n\nTherefore, Janet makes $18 every day at the farmers' market.\n\nFinal answer: \\boxed{18} dollars\n#### 18"
+     'kes half as much white fiber as blue fiber. So, a robe takes 2 / 2 = 1 bolt of white fiber.\n3. In total, a robe takes 2 + 1 = 3 bolts of fiber.\n\nSo the final answer is \\boxed{3} bolts of fiber.\n#### 3'
+Fast_dLLM_v2_1.5B@thr0.9                 BFCL-simple n=30: JSON-valid 3%  name 0%  AST acc 0%  1.60s/item  tok/fwd 1.59
+     'To find the area of a triangle, you can use the formula:\n\nArea = (1/2) * base * height\n\nIn this case, the base is 10 units and the height is 5 units. Plugging these values into the formula, we get:\n\nA'
+     '```python\nimport math\n\nresult = math.factorial(5)\nprint(result)\n```\n\nThis code imports the math module and then uses the math.factorial() function to calculate the factorial of 5. The result is then p'
+     'To calculate the hypotenuse of a right triangle given the lengths of the other two sides, you can use the Pythagorean theorem. The theorem states that in a right triangle, the square of the length of '
+Fast_dLLM_v2_1.5B@thr0.9                 GSM8K n=20: EM 40%  2.61s/item  232 tok/item  tok/fwd 2.14
+     "maining eggs at the farmers' market daily for $2 per fresh duck egg, so she makes 9 * 2 = $18 every day.\n\nTherefore, Janet makes $18 every day at the farmers' market.\n\nFinal answer: \\boxed{18}\n#### 18"
+     'kes half as much white fiber as blue fiber. So, a robe takes 2 / 2 = 1 bolt of white fiber.\n3. In total, a robe takes 2 + 1 = 3 bolts of fiber.\n\nSo the final answer is \\boxed{3} bolts of fiber.\n#### 3'
+Fast_dLLM_v2_1.5B@thr0.7                 BFCL-simple n=30: JSON-valid 3%  name 0%  AST acc 0%  1.26s/item  tok/fwd 2.01
+     'To find the area of a triangle, you can use the formula:\n\nArea = (1/2) * base * height\n\nIn this case, the base is 10 units and the height is 5 units. Plugging these values into the formula, we get:\n\nA'
+     '```python\nimport math\n\nresult = math.factorial(5)\nprint(result)\n```\n\nThis code imports the math module and then uses the math.factorial() function to calculate the factorial of 5. The result is then p'
+     'To calculate the hypotenuse of a right triangle given the lengths of the other two sides, you can use the Pythagorean theorem. The theorem states that in a right triangle, the square of the length of '
+Fast_dLLM_v2_1.5B@thr0.7                 GSM8K n=20: EM 40%  2.16s/item  237 tok/item  tok/fwd 2.65
+     "eggs\n\nFinally, let's calculate the amount of money Janet makes every day at the farmers' market: 9 eggs * $2 per egg = $18\n\nSo, Janet makes \\boxed{18} dollars every day at the farmers' market.\n#### 18"
+     'te fiber, which is 2 / 2 = 1 bolt of white fiber.\n3. In total, a robe takes 2 bolts of blue fiber + 1 bolt of white fiber = 3 bolts of fabric.\n\nSo the final answer is \\boxed{3} bolts of fabric.\n#### 3'

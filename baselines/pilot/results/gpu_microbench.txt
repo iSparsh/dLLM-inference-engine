@@ -1,0 +1,21 @@
+GPU: NVIDIA GeForce RTX 4060 Laptop GPU, SMs=24, memclk=8001000 kHz, bus=128 bit, L2=32 MB -> theoretical 256.0 GB/s
+read-only stream 1GiB: median 4.290 ms -> 250.3 GB/s
+copy 1GiB (r+w): median 9.282 ms -> 231.4 GB/s total traffic
+cudaMemcpy D2D 1GiB: median 9.481 ms -> 226.5 GB/s total traffic
+336 empty launches (stream): median 0.685 ms -> 2.04 us/launch
+336 empty kernels in CUDA Graph: median 0.165 ms -> 0.49 us/kernel
+
+GPU NVIDIA GeForce RTX 4060 Laptop GPU theoretical 256 GB/s. Linear-weight bytes/step: 3.087 GB (layers 2.620 GB + lm_head 0.467 GB)
+Bandwidth floor for one step at theoretical peak: 12.06 ms
+
+M      | cuBLAS step(ms) GB/s eff     x T(1)     | naive step(ms) GB/s eff   | lm_head(ms)
+1      | 10.942         239.5        1.00       | 10.826         242.1      | 1.868     
+2      | 11.293         232.0        1.03       | 10.993         238.4      | 1.886     
+4      | 11.312         231.6        1.03       | 11.034         237.5      | 1.897     
+8      | 11.209         233.8        1.02       | 14.317         183.0      | 1.912     
+16     | 11.265         232.6        1.03       | 62.598         41.9       | 1.932     
+32     | 11.588         226.1        1.06       | 110.538        23.7       | 1.980     
+64     | 11.818         221.7        1.08       | -              -          | 2.039     
+128    | 14.296         183.3        1.31       | -              -          | 2.192     
+256    | 24.736         105.9        2.26       | -              -          | 4.074     
+512    | 46.195         56.7         4.22       | -              -          | 8.049     

@@ -1,0 +1,5 @@
+llama.cpp build 792fcf4, CUDA, RTX 4060 Laptop, -ngl 99 -fa 1, Qwen2.5-1.5B-Instruct converted with convert_hf_to_gguf.py
+| model            | size     | params | pp128 t/s        | tg128 t/s    |
+| qwen2 1.5B BF16  | 2.88 GiB | 1.54 B | 4764.38 ± 276.56 | 64.62 ± 0.04 |
+| qwen2 1.5B F16   | 2.88 GiB | 1.54 B | 5198.07 ± 432.24 | 64.26 ± 0.08 |
+CPU only (-ngl 0, 16 threads, i7-13700HX): pp64 171.79 ± 5.45 t/s, tg32 7.82 ± 0.06 t/s

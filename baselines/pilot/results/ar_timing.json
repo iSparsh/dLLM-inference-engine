@@ -1,0 +1,46 @@
+[
+ {
+  "prompt": 98,
+  "new_tokens": 256,
+  "secs": 5.446256240999901,
+  "tok_s": 47.00476596617127,
+  "ms_per_tok": 21.274438441405863,
+  "prefill_ms": 29.495140000108222,
+  "text": "To determine how much Janet makes every day at the farmers' market, we need to follow these steps:\n\n1. Calculate the total number of eggs laid per day.\n2. Determine how many eggs are eaten for breakfast each day.\n3. Subtract the number of eggs eaten from the total number of eggs laid to find out how many eggs are left for baking muffins.\n4. Subtract the number of eggs used for baking muffins from the remaining eggs to find out how many eggs are sold at the farmers' market.\n5. Calculate the revenue from selling the eggs at the farmers' market.\n\nLet's go through each step in detail:\n\n1. **Total number of eggs laid per day:**\n   \\[\n   16 \\text{ eggs/day}\n   \\]\n\n2. **Number of eggs eaten for breakfast each day:**\n   \\[\n   3 \\text{ eggs/day}\n   \\]\n\n3. **Remaining eggs after breakfast:**\n   \\[\n   16 - 3 = 13 \\text{ eggs/day}\n   \\]\n\n4. **Number of eggs used for baking muffins each day:**\n   \\[\n   4 \\text{ eggs/day}\n   \\]\n\n5. **Remaining eggs available for sale at the",
+  "prompt_name": "gsm8k",
+  "mode": "eager"
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 256,
+  "secs": 5.193757321999328,
+  "tok_s": 49.289942546151394,
+  "ms_per_tok": 20.288114539059876,
+  "prefill_ms": 20.348711000224284,
+  "text": "Large Language Models (LLMs) are artificial intelligence systems that can generate human-like text based on the input they receive. They use deep learning algorithms and vast amounts of data to learn patterns and relationships between words, phrases, and sentences.\n\nOne of the most well-known examples of an LLM is GPT-3, which was released by OpenAI in 2020. It has been trained on over 1 trillion parameters and can perform tasks such as text generation, question answering, and translation.\n\nOther popular LLMs include BERT, T5, and Qwen. These models have different strengths and weaknesses depending on their specific applications, but all share the ability to understand natural language and generate coherent responses.\n\nOverall, LLMs represent a significant advancement in AI technology and have the potential to revolutionize many industries, from healthcare to finance to entertainment. However, they also raise important ethical and privacy concerns, particularly around issues related to bias and transparency. As with any new technology, it's important to carefully consider these challenges before deploying LLMs in real-world settings. \n\nSource: https://www.nature.com/articles/d41586-020-01793-4\n\nNote: The source link provided above may not",
+  "prompt_name": "intro",
+  "mode": "eager"
+ },
+ {
+  "prompt": 98,
+  "new_tokens": 256,
+  "secs": 102.28046009599984,
+  "tok_s": 2.5029218656204706,
+  "ms_per_tok": 399.5330472499994,
+  "prefill_ms": 42936.90569199953,
+  "text": "To determine how much Janet makes every day at the farmers' market, we need to follow these steps:\n\n1. Calculate the total number of eggs laid per day.\n2. Determine how many eggs are eaten for breakfast each day.\n3. Subtract the number of eggs eaten from the total number of eggs laid to find out how many eggs are left for baking muffins.\n4. Subtract the number of eggs used for baking muffins from the remaining eggs to find out how many eggs are sold at the farmers' market.\n5. Calculate the revenue from selling the eggs at the farmers' market.\n\nLet's go through each step in detail:\n\n1. **Total number of eggs laid per day:**\n   \\[\n   16 \\text{ eggs/day}\n   \\]\n\n2. **Number of eggs eaten for breakfast each day:**\n   \\[\n   3 \\text{ eggs/day}\n   \\]\n\n3. **Remaining eggs after breakfast:**\n   \\[\n   16 - 3 = 13 \\text{ eggs/day}\n   \\]\n\n4. **Number of eggs used for baking muffins each day:**\n   \\[\n   4 \\text{ eggs/day}\n   \\]\n\n5. **Remaining eggs available for sale at the",
+  "prompt_name": "gsm8k",
+  "mode": "compiled_static"
+ },
+ {
+  "prompt": 29,
+  "new_tokens": 256,
+  "secs": 6.305393083999661,
+  "tok_s": 40.60016506339889,
+  "ms_per_tok": 24.630441734373676,
+  "prefill_ms": 19.82467700054258,
+  "text": "Large Language Models (LLMs) are artificial intelligence systems that can generate human-like text based on the input they receive. They use deep learning algorithms and vast amounts of data to learn patterns and relationships between words, phrases, and sentences.\n\nOne of the most well-known examples of an LLM is GPT-3, which was released by OpenAI in 2020. It has been trained on over 1 trillion parameters and can perform tasks such as text generation, question answering, and translation.\n\nOther popular LLMs include BERT, T5, and Qwen. These models have different strengths and weaknesses depending on their specific applications, but all share the ability to understand natural language and generate coherent responses.\n\nOverall, LLMs represent a significant advancement in AI technology and have the potential to revolutionize many industries, from healthcare to finance to entertainment. However, they also raise important ethical and privacy concerns, particularly around issues related to bias and transparency. As with any new technology, it's important to carefully consider these challenges before deploying LLMs in real-world settings. \n\nSource: https://www.nature.com/articles/d41586-020-01793-4\n\nNote: The source link provided above may not",
+  "prompt_name": "intro",
+  "mode": "compiled_static"
+ }
+]
