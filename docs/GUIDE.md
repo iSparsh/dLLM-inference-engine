@@ -2,6 +2,11 @@
 
 This is the walkthrough for anyone on the team who is new to how LLMs run. It assumes you know C++, CUDA and Python. It does not assume you know anything about language models. Read it top to bottom once; after that, [PLAN.md](PLAN.md) has the exact numbers and decisions, and [explainer.html](explainer.html) has the pictures (download it and open it in a browser).
 
+**Labels you will see everywhere:**
+- **K1, K2, K3** are the three CUDA kernels we write: K1 parallel selection, K2 block-causal attention, K3 fused small ops (section 6.2).
+- **P1–P4** are the four new decoding strategies: P1 stop on time, P2 merge the commit pass, P3 two steps per pass, P4 smarter commit rules (section 7).
+- **τ (tau)** is the confidence threshold (section 4).
+
 ---
 
 ## 1. The project in one paragraph

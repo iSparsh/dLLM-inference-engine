@@ -74,6 +74,12 @@ header.top { max-width: 1040px; margin: 0 auto; padding-block: 56px 8px; display
 .lede { font-size: 1.15rem; color: var(--ink-2); max-width: 64ch; }
 .facts { display: flex; flex-wrap: wrap; gap: 8px 24px; font: 13px/1.5 var(--f-mono); color: var(--muted); }
 .facts span b { color: var(--ink); font-weight: 600; }
+.names { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-top: 4px; }
+.names > div { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.names h2 { font: 600 13px var(--f-mono); letter-spacing: 0.04em; color: var(--accent); }
+.names dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 0.92rem; }
+.names dt { font: 600 13px/1.6 var(--f-mono); }
+.names dd { margin: 0; color: var(--ink-2); min-width: 0; }
 
 /* Section heading rail */
 .sec-head { display: grid; gap: 10px; }
@@ -200,6 +206,26 @@ footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 
     <span>target GPU <b>RTX 4060 Laptop · 8 GB · 256 GB/s</b></span>
     <span>video <b>~12/4</b> · report <b>12/7</b></span>
   </div>
+  <div class="names">
+    <div>
+      <h2>K1–K3 · CUDA kernels we write</h2>
+      <dl>
+        <dt>K1</dt><dd>Parallel selection: decides which guessed tokens to keep after each pass</dd>
+        <dt>K2</dt><dd>Block-causal attention: the attention step, reading the KV cache in place</dd>
+        <dt>K3</dt><dd>Fused small ops: several tiny PyTorch steps merged into single kernels</dd>
+      </dl>
+    </div>
+    <div>
+      <h2>P1–P4 · New decoding strategies</h2>
+      <dl>
+        <dt>P1</dt><dd>Stop on time: stop as soon as the answer ends</dd>
+        <dt>P2</dt><dd>Merge the commit pass into the next block's first pass</dd>
+        <dt>P3</dt><dd>Two steps per pass, using a guess that is checked afterwards</dd>
+        <dt>P4</dt><dd>Smarter rules for when to keep a guess</dd>
+      </dl>
+    </div>
+  </div>
+  <p class="facts">τ (tau) is the confidence threshold: a guess is kept only if the model is at least this sure of it. Sections 4 and 5 explain each item in detail.</p>
 </header>
 
 <main>
@@ -317,7 +343,7 @@ footer { max-width: 1040px; margin: 72px auto 0; padding-top: 20px; border-top: 
       <span><i class="hatch"></i>estimate</span>
     </div>
     <div class="scroll-x"><svg class="chart" id="chart-time" viewBox="0 0 760 200" role="img" aria-label="Reference pass: 11.6 ms matrix multiplies, 4.2 ms other GPU work, 6.5 ms CPU gaps, 22.3 ms total. Our target: about 14.5 to 16 ms."></svg></div>
-    <figcaption>Reference numbers measured with <code>torch.profiler</code> in the pilot (~1,364 kernels per pass, 15.8 ms of GPU-busy time, ~22 ms wall time). The target bar is the survey's estimate of 14.5–16 ms; its split is illustrative. Our first profiling task (E0) confirms how the 4.2 ms divides between attention, selection and the small ops.</figcaption>
+    <figcaption>Reference numbers measured with <code>torch.profiler</code> in the pilot (~1,364 kernels per pass, 15.8 ms of GPU-busy time, ~22 ms wall time). The target bar is the survey's estimate of 14.5–16 ms; its split is illustrative. Our first profiling task confirms how the 4.2 ms divides between attention, selection and the small ops.</figcaption>
   </figure>
 </section>
 
