@@ -1,5 +1,9 @@
 # Euler probe
 
+Read the [course Slurm instructions](slurm_usage.md) before writing a job. A
+[redacted probe snapshot](probe_122802.txt) records the GPU, toolchain and
+connectivity observed on November 17, 2026.
+
 `probe_euler.sh` is a one-shot, polite survey of what Euler gives us: partitions, GPU types,
 limits, modules (CUDA/gcc/python), storage/quota, outbound internet from a compute node, and a
 tiny CUDA compile-and-run test. It follows the course rules (`slurm_usage.md`): everything runs via

@@ -1,0 +1,743 @@
+Euler probe 122802, captured November 17, 2026.
+Account and private directory details are removed. Hardware, toolchain and connectivity
+results are observations from one job and may change.
+
+ECE 759 Euler probe -- job 122802 on euler04.engr.wisc.edu -- Tue Nov 17 09:10:59 PM CST 2026
+script: /srv/home/[username]/probe/probe_euler.sh   args:
+
+===== SINFO (all partitions) =====
+$ sinfo -o %P %a %l %D %G %f %N
+PARTITION AVAIL TIMELIMIT NODES GRES AVAIL_FEATURES NODELIST
+none* up 16-16:00:00 0 (null) (null)
+interactive up 16-16:00:00 6 gpu:rtx4000ada:8,scratch:1720G amd,epyc,genoa,gpu,ada,quadro_gpu,ssd euler[01-04,09-10]
+interactive up 16-16:00:00 4 gpu:rtxa4500:8,scratch:2840G amd,epyc,milan,gpu,ampere,quadro_gpu,ssd euler[05-08]
+interactive up 16-16:00:00 1 gpu:rtx2080ti:2 amd,epyc,naples,gpu,turing euler16
+interactive up 16-16:00:00 2 gpu:h100:4,scratch:5800G intel,sapphire-rapids,gpu,hopper,ent_gpu,ssd euler[29-30]
+interactive up 16-16:00:00 1 scratch:6900G amd,epyc,milan-x,ssd,cpu euler141
+interactive up 16-16:00:00 10 scratch:2900G amd,epyc,genoa,cpu,ssd euler[146-155]
+interactive up 16-16:00:00 2 gpu:a100:4,scratch:3400G amd,epyc,epyc2,rome,gpu,ampere,ssd,ent_gpu euler[17,19]
+interactive up 16-16:00:00 4 scratch:1450G amd,epyc,milan,ssd,cpu euler[142-145]
+interactive up 16-16:00:00 3 (null) intel,skylake,cpu euler[156-158]
+research up 16-16:00:00 6 gpu:rtx4000ada:8,scratch:1720G amd,epyc,genoa,gpu,ada,quadro_gpu,ssd euler[01-04,09-10]
+research up 16-16:00:00 4 gpu:rtxa4500:8,scratch:2840G amd,epyc,milan,gpu,ampere,quadro_gpu,ssd euler[05-08]
+research up 16-16:00:00 1 gpu:rtx2080ti:2 amd,epyc,naples,gpu,turing euler16
+research up 16-16:00:00 2 gpu:h100:4,scratch:5800G intel,sapphire-rapids,gpu,hopper,ent_gpu,ssd euler[29-30]
+research up 16-16:00:00 1 scratch:6900G amd,epyc,milan-x,ssd,cpu euler141
+research up 16-16:00:00 10 scratch:2900G amd,epyc,genoa,cpu,ssd euler[146-155]
+research up 16-16:00:00 2 gpu:a100:4,scratch:3400G amd,epyc,epyc2,rome,gpu,ampere,ssd,ent_gpu euler[17,19]
+research up 16-16:00:00 4 scratch:1450G amd,epyc,milan,ssd,cpu euler[142-145]
+research up 16-16:00:00 3 (null) intel,skylake,cpu euler[156-158]
+instruction up 45:00 4 gpu:rtx4000ada:8,scratch:1720G amd,epyc,genoa,gpu,ada,quadro_gpu,ssd euler[01-04]
+instruction up 45:00 1 scratch:1450G amd,epyc,milan,ssd,cpu euler145
+
+===== SINFO (instruction partition, per node) =====
+$ sinfo -p instruction -N -o %N %T %c %m %G %f
+NODELIST STATE CPUS MEMORY GRES AVAIL_FEATURES
+euler01 mixed- 96 248000 gpu:rtx4000ada:8,scratch:1720G amd,epyc,genoa,gpu,ada,quadro_gpu,ssd
+euler02 drained$ 96 248000 gpu:rtx4000ada:8,scratch:1720G amd,epyc,genoa,gpu,ada,quadro_gpu,ssd
+euler03 mixed 96 248000 gpu:rtx4000ada:8,scratch:1720G amd,epyc,genoa,gpu,ada,quadro_gpu,ssd
+euler04 mixed 96 248000 gpu:rtx4000ada:8,scratch:1720G amd,epyc,genoa,gpu,ada,quadro_gpu,ssd
+euler145 down$ 256 500000 scratch:1450G amd,epyc,milan,ssd,cpu
+
+===== SCONTROL SHOW PARTITION instruction =====
+$ scontrol show partition instruction
+PartitionName=instruction
+   AllowGroups=euler-courses AllowAccounts=ALL AllowQos=ALL
+   AllocNodes=ALL Default=NO QoS=N/A
+   DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=180 Hidden=NO
+   MaxNodes=UNLIMITED MaxTime=00:45:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED
+   Nodes=euler[01-04,145]
+   PriorityJobFactor=1 PriorityTier=300 RootOnly=NO ReqResv=NO OverSubscribe=YES:4
+   OverTimeLimit=NONE PreemptMode=REQUEUE
+   State=UP TotalCPUs=640 TotalNodes=5 SelectTypeParameters=NONE
+   JobDefaults=(null)
+   DefMemPerCPU=2000 MaxMemPerNode=UNLIMITED
+   TRES=cpu=640,mem=1492000M,node=5,billing=640,gres/gpu=32
+
+
+===== SCONTROL SHOW PARTITION (all, key fields) =====
+$ scontrol show partition | grep -E "PartitionName|AllowGroups|AllowAccounts|AllowQos|MaxTime|DefaultTime|MaxNodes|MaxCPUsPerNode|DefMemPerCPU|MaxMemPer|TRES|OverSubscribe|State"
+PartitionName=none
+   AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL
+   DefaultTime=04:00:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=180 Hidden=NO
+   MaxNodes=UNLIMITED MaxTime=16-16:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED
+   PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=YES:4
+   State=UP TotalCPUs=0 TotalNodes=0 SelectTypeParameters=NONE
+   DefMemPerCPU=2000 MaxMemPerNode=UNLIMITED
+   TRES=(null)
+PartitionName=interactive
+   AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL
+   DefaultTime=04:00:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=180 Hidden=NO
+   MaxNodes=UNLIMITED MaxTime=16-16:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED
+   PriorityJobFactor=1 PriorityTier=100 RootOnly=NO ReqResv=NO OverSubscribe=YES:4
+   State=UP TotalCPUs=6248 TotalNodes=33 SelectTypeParameters=NONE
+   DefMemPerCPU=2000 MaxMemPerNode=UNLIMITED
+   TRES=cpu=6248,mem=19894000M,node=33,billing=6248,gres/gpu=98
+PartitionName=research
+   AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL
+   DefaultTime=04:00:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=180 Hidden=NO
+   MaxNodes=UNLIMITED MaxTime=16-16:00:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED
+   PriorityJobFactor=1 PriorityTier=200 RootOnly=NO ReqResv=NO OverSubscribe=YES:4
+   State=UP TotalCPUs=6248 TotalNodes=33 SelectTypeParameters=NONE
+   DefMemPerCPU=2000 MaxMemPerNode=UNLIMITED
+   TRES=cpu=6248,mem=19894000M,node=33,billing=6248,gres/gpu=98
+PartitionName=instruction
+   AllowGroups=euler-courses AllowAccounts=ALL AllowQos=ALL
+   DefaultTime=00:30:00 DisableRootJobs=NO ExclusiveUser=NO ExclusiveTopo=NO GraceTime=180 Hidden=NO
+   MaxNodes=UNLIMITED MaxTime=00:45:00 MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED
+   PriorityJobFactor=1 PriorityTier=300 RootOnly=NO ReqResv=NO OverSubscribe=YES:4
+   State=UP TotalCPUs=640 TotalNodes=5 SelectTypeParameters=NONE
+   DefMemPerCPU=2000 MaxMemPerNode=UNLIMITED
+   TRES=cpu=640,mem=1492000M,node=5,billing=640,gres/gpu=32
+
+===== GPU TYPES PER PARTITION (from sinfo GRES) =====
+$ sinfo -h -o "%P|%G|%D" | sort | awk -F"|" "{printf \"%-20s %-45s nodes=%s\n\", \$1, \$2, \$3}"
+instruction          gpu:rtx4000ada:8,scratch:1720G                nodes=4
+instruction          scratch:1450G                                 nodes=1
+interactive          gpu:a100:4,scratch:3400G                      nodes=2
+interactive          gpu:h100:4,scratch:5800G                      nodes=2
+interactive          gpu:rtx2080ti:2                               nodes=1
+interactive          gpu:rtx4000ada:8,scratch:1720G                nodes=6
+interactive          gpu:rtxa4500:8,scratch:2840G                  nodes=4
+interactive          (null)                                        nodes=3
+interactive          scratch:1450G                                 nodes=4
+interactive          scratch:2900G                                 nodes=10
+interactive          scratch:6900G                                 nodes=1
+none*                (null)                                        nodes=0
+research             gpu:a100:4,scratch:3400G                      nodes=2
+research             gpu:h100:4,scratch:5800G                      nodes=2
+research             gpu:rtx2080ti:2                               nodes=1
+research             gpu:rtx4000ada:8,scratch:1720G                nodes=6
+research             gpu:rtxa4500:8,scratch:2840G                  nodes=4
+research             (null)                                        nodes=3
+research             scratch:1450G                                 nodes=4
+research             scratch:2900G                                 nodes=10
+research             scratch:6900G                                 nodes=1
+--- distinct GPU types per partition ---
+$ sinfo -h -o "%P|%G" | awk -F"|" "{n=split(\$2,a,\",\"); for(i=1;i<=n;i++) if(a[i] ~ /^gpu/){split(a[i],b,\":\"); t=(b[2] ~ /^[0-9]/)?\"(untyped)\":b[2]; print \$1, t}}" | sort | uniq -c
+      1 instruction rtx4000ada
+      1 interactive a100
+      1 interactive h100
+      1 interactive rtx2080ti
+      1 interactive rtx4000ada
+      1 interactive rtxa4500
+      1 research a100
+      1 research h100
+      1 research rtx2080ti
+      1 research rtx4000ada
+      1 research rtxa4500
+--- instruction-partition nodes: Gres / CPUs / RealMemory / features (scontrol) ---
+$ for n in $(sinfo -h -p instruction -N -o "%N" | sort -u | head -60); do scontrol show node $n -o | grep -oE "NodeName=[^ ]+|Gres=[^ ]+|CPUTot=[^ ]+|RealMemory=[^ ]+|ActiveFeatures=[^ ]+" | tr "\n" " "; echo; done
+NodeName=euler01 CPUTot=96 ActiveFeatures=amd,epyc,genoa,gpu,ada,quadro_gpu,ssd Gres=gpu:rtx4000ada:8,scratch:1720G RealMemory=248000
+NodeName=euler02 CPUTot=96 ActiveFeatures=amd,epyc,genoa,gpu,ada,quadro_gpu,ssd Gres=gpu:rtx4000ada:8,scratch:1720G RealMemory=248000
+NodeName=euler03 CPUTot=96 ActiveFeatures=amd,epyc,genoa,gpu,ada,quadro_gpu,ssd Gres=gpu:rtx4000ada:8,scratch:1720G RealMemory=248000
+NodeName=euler04 CPUTot=96 ActiveFeatures=amd,epyc,genoa,gpu,ada,quadro_gpu,ssd Gres=gpu:rtx4000ada:8,scratch:1720G RealMemory=248000
+NodeName=euler145 CPUTot=256 ActiveFeatures=amd,epyc,milan,ssd,cpu Gres=scratch:1450G RealMemory=500000
+
+===== ACCOUNT / QOS / LIMITS =====
+[Account, share and queue details omitted.]
+
+===== MODULES (login-style survey from compute node) =====
+--- module avail cuda ---
+nvidia/cuda/10.2.2
+nvidia/cuda/11.0.3
+nvidia/cuda/11.3.1
+nvidia/cuda/11.6.0
+nvidia/cuda/11.8.0
+nvidia/cuda/12.0.0
+nvidia/cuda/12.1.0
+nvidia/cuda/12.2.0
+nvidia/cuda/12.5.0
+nvidia/cuda/12.9.1
+nvidia/cuda/13.0.0
+nvidia/nvhpc-hpcx-cuda11/24.5
+nvidia/nvhpc-hpcx-cuda12/23.11
+nvidia/nvhpc-hpcx-cuda12/24.5
+--- module avail nvhpc ---
+nvidia/nvhpc-byo-compiler/21.5
+nvidia/nvhpc-byo-compiler/22.3
+nvidia/nvhpc-byo-compiler/22.9
+nvidia/nvhpc-byo-compiler/23.7
+nvidia/nvhpc-byo-compiler/23.11
+nvidia/nvhpc-byo-compiler/24.5
+nvidia/nvhpc-hpcx-cuda11/24.5
+nvidia/nvhpc-hpcx-cuda12/23.11
+nvidia/nvhpc-hpcx-cuda12/24.5
+nvidia/nvhpc-hpcx/23.11
+nvidia/nvhpc-hpcx/24.5
+nvidia/nvhpc-nompi/21.5
+nvidia/nvhpc-nompi/22.3
+nvidia/nvhpc-nompi/22.9
+nvidia/nvhpc-nompi/23.7
+nvidia/nvhpc-nompi/23.11
+nvidia/nvhpc-nompi/24.5
+nvidia/nvhpc-openmpi3/23.11
+nvidia/nvhpc-openmpi3/24.5
+nvidia/nvhpc/21.5
+nvidia/nvhpc/22.3
+nvidia/nvhpc/22.9
+nvidia/nvhpc/23.7
+nvidia/nvhpc/23.11
+nvidia/nvhpc/24.5
+--- module avail gcc ---
+gcc/12.2.0
+gcc/13.2.0
+gcc/14.3.0
+--- module avail cmake ---
+cmake/4.3.1
+cmake/4.1.0
+--- module avail python ---
+--- module avail conda ---
+conda/miniforge/23.1.0
+conda/miniforge/24.3.0
+--- module avail mamba ---
+mamba/23.1.0
+--- module avail miniforge ---
+conda/miniforge/23.1.0
+conda/miniforge/24.3.0
+--- module avail anaconda ---
+$ module list 2>&1
+No modules loaded
+$ echo "MODULEPATH=$MODULEPATH"
+MODULEPATH=/opt/ohpc/pub/modulefiles:/opt/apps/lmod/modulefiles
+
+===== STORAGE: HOME / QUOTA / SCRATCH =====
+[Home directory and quota details omitted.]
+
+===== USER-LEVEL TOOLS =====
+$ for t in python3 uv conda mamba pip3 git cmake ninja; do printf "%-8s " $t; (command -v $t || echo "-"); done
+python3  /usr/bin/python3
+uv       -
+conda    -
+mamba    -
+pip3     /usr/bin/pip3
+git      /usr/bin/git
+cmake    /usr/bin/cmake
+ninja    /usr/bin/ninja
+$ python3 --version; uv --version; conda --version
+Python 3.12.15
+bash: line 1: uv: command not found
+bash: line 1: conda: command not found
+FAILED (rc=127): python3 --version; uv --version; conda --version
+
+===== JOB INFO =====
+date: Tue Nov 17 09:11:00 PM CST 2026
+SLURM_JOB_ID=122802  SLURM_JOB_PARTITION=instruction  SLURM_JOB_GPUS=6  CUDA_VISIBLE_DEVICES=0
+$ echo "hostname: $(hostname)"; echo "user: $USER"; uname -srm; cat /etc/os-release 2>/dev/null | head -3
+hostname: euler04.engr.wisc.edu
+user: [username]
+Linux 6.12.0-211.68.1.el10_2.x86_64 x86_64
+NAME="AlmaLinux"
+VERSION="10.2 (Lavender Lion)"
+RELEASE_TYPE=stable
+$ scontrol show job $SLURM_JOB_ID | grep -E "JobState|TimeLimit|TRES|Gres|Partition|NodeList"
+[Job metadata containing account identifiers omitted.]
+
+   RunTime=00:00:03 TimeLimit=00:10:00 TimeMin=N/A
+   Partition=instruction AllocNode:Sid=0.0.0.0:2115547
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=euler04
+   ReqTRES=cpu=1,mem=8G,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=1,mem=8G,node=1,billing=1,gres/gpu=1
+
+===== NVIDIA-SMI =====
+$ nvidia-smi
+Tue Nov 17 21:11:01 2026
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.159.04             Driver Version: 580.159.04     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA RTX 4000 SFF Ada ...    On  |   00000000:81:00.0 Off |                  Off |
+| 30%   33C    P8             16W /   70W |       1MiB /  20475MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+$ nvidia-smi --query-gpu=name,compute_cap,memory.total,clocks.max.memory,clocks.max.sm,power.limit,driver_version --format=csv
+name, compute_cap, memory.total [MiB], clocks.max.memory [MHz], clocks.max.sm [MHz], power.limit [W], driver_version
+NVIDIA RTX 4000 SFF Ada Generation, 8.9, 20475 MiB, 7001 MHz, 3105 MHz, 70.00 W, 580.159.04
+$ nvidia-smi -L
+GPU 0: NVIDIA RTX 4000 SFF Ada Generation (UUID: GPU-[uuid])
+$ nvidia-smi topo -m | head -5
+	GPU0	NIC0	NIC1	CPU Affinity	NUMA Affinity	GPU NUMA ID
+GPU0	 X 	NODE	NODE		1		N/A
+NIC0	NODE	 X 	PIX
+NIC1	NODE	PIX	 X
+
+
+===== CPU / MEMORY =====
+$ lscpu | head -20
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           52 bits physical, 57 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  96
+On-line CPU(s) list:                     0-95
+Vendor ID:                               AuthenticAMD
+Model name:                              AMD EPYC 9254 24-Core Processor
+CPU family:                              25
+Model:                                   17
+Thread(s) per core:                      2
+Core(s) per socket:                      24
+Socket(s):                               2
+Stepping:                                1
+Frequency boost:                         enabled
+CPU(s) scaling MHz:                      87%
+CPU max MHz:                             4153.1890
+CPU min MHz:                             1500.0000
+BogoMIPS:                                5800.00
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local user_shstk avx512_bf16 clzero irperf xsaveerptr rdpru wbnoinvd amd_ppin cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq la57 rdpid overflow_recov succor smca fsrm flush_l1d debug_swap
+$ free -g
+               total        used        free      shared  buff/cache   available
+Mem:             251          18         214           0          20         232
+Swap:              3           0           3
+$ echo "cgroup mem limit: $(cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null)"; echo "nproc: $(nproc)"
+cgroup mem limit:
+nproc: 2
+
+===== MODULES: AVAILABLE (cuda/nvhpc/gcc/cmake/python/conda) =====
+$ module -t avail (filtered)
+cmake/
+cmake/4.3.1
+cmake/
+cmake/4.1.0
+conda/miniforge/
+conda/miniforge/23.1.0
+conda/miniforge/24.3.0
+gcc/12.2.0
+gcc/13.2.0
+gcc/14.3.0
+mamba/
+mamba/23.1.0
+nvidia/cuda/
+nvidia/cuda/10.2.2
+nvidia/cuda/11.0.3
+nvidia/cuda/11.3.1
+nvidia/cuda/11.6.0
+nvidia/cuda/11.8.0
+nvidia/cuda/12.0.0
+nvidia/cuda/12.1.0
+nvidia/cuda/12.2.0
+nvidia/cuda/12.5.0
+nvidia/cuda/12.9.1
+nvidia/cuda/13.0.0
+nvidia/licensing/
+nvidia/licensing/hpc-sdk
+nvidia/licensing/sdk-samples-and-tools
+nvidia/nvhpc-byo-compiler/
+nvidia/nvhpc-byo-compiler/21.5
+nvidia/nvhpc-byo-compiler/22.3
+nvidia/nvhpc-byo-compiler/22.9
+nvidia/nvhpc-byo-compiler/23.7
+nvidia/nvhpc-byo-compiler/23.11
+nvidia/nvhpc-byo-compiler/24.5
+nvidia/nvhpc-hpcx-cuda11/
+nvidia/nvhpc-hpcx-cuda11/24.5
+nvidia/nvhpc-hpcx-cuda12/
+nvidia/nvhpc-hpcx-cuda12/23.11
+nvidia/nvhpc-hpcx-cuda12/24.5
+nvidia/nvhpc-hpcx/
+nvidia/nvhpc-hpcx/23.11
+nvidia/nvhpc-hpcx/24.5
+nvidia/nvhpc-nompi/
+nvidia/nvhpc-nompi/21.5
+nvidia/nvhpc-nompi/22.3
+nvidia/nvhpc-nompi/22.9
+nvidia/nvhpc-nompi/23.7
+nvidia/nvhpc-nompi/23.11
+nvidia/nvhpc-nompi/24.5
+nvidia/nvhpc-openmpi3/
+nvidia/nvhpc-openmpi3/23.11
+nvidia/nvhpc-openmpi3/24.5
+nvidia/nvhpc/
+nvidia/nvhpc/21.5
+nvidia/nvhpc/22.3
+nvidia/nvhpc/22.9
+nvidia/nvhpc/23.7
+nvidia/nvhpc/23.11
+nvidia/nvhpc/24.5
+--- full module list (terse), for reference ---
+autotools
+cmake/
+cmake/4.3.1
+gnu15/
+gnu15/15.2.0
+hwloc/
+hwloc/2.13.0
+intel/
+intel/2025.0.4
+os
+papi/
+papi/7.2.0
+pmix/
+pmix/4.2.9
+prun/
+prun/2.2
+spack/
+spack/1.1.1
+ucx/
+ucx/1.20.0
+valgrind/
+valgrind/3.26.0
+abaqus/
+abaqus/2023
+blaze/
+blaze/3.8
+blender/
+blender/4.0.2
+boost/
+boost/1.85.0
+cmake/
+cmake/4.1.0
+conda/miniforge/
+conda/miniforge/23.1.0
+conda/miniforge/24.3.0
+gcc/12.2.0
+gcc/13.2.0
+gcc/14.3.0
+gromacs/
+gromacs/gnu15-ompi5.0.8-cu13.0/2025.4
+gromacs/gnu15-ompi5.0.8-nogpu/2025.4
+intel-noopt/
+intel-noopt/dev-utilities/latest
+intel-noopt/dev-utilities/2024.0.0
+intel-noopt/dev-utilities/2025.1.0
+intel-noopt/advisor/latest
+intel-noopt/advisor/2024.0
+intel-noopt/advisor/2025.1
+intel-noopt/ccl/latest
+intel-noopt/ccl/2021.11.0
+intel-noopt/ccl/2021.15.2
+intel-noopt/compiler-intel-llvm/latest
+intel-noopt/compiler-intel-llvm/2025.1.1
+intel-noopt/compiler-rt/latest
+intel-noopt/compiler-rt/2024.0.0
+intel-noopt/compiler-rt/2025.1.1
+intel-noopt/compiler/latest
+intel-noopt/compiler/2024.0.0
+intel-noopt/compiler/2025.1.1
+intel-noopt/dal/latest
+intel-noopt/dal/2024.0.0
+intel-noopt/dal/2025.5
+intel-noopt/debugger/latest
+intel-noopt/debugger/2024.0.0
+intel-noopt/debugger/2025.1.1
+intel-noopt/dnnl/latest
+intel-noopt/dnnl/3.3.0
+intel-noopt/dnnl/3.7.3
+intel-noopt/dpct/latest
+intel-noopt/dpct/2022.0.0
+intel-noopt/dpct/2024.0.0
+intel-noopt/dpct/2025.1.0
+intel-noopt/dpl/latest
+intel-noopt/dpl/2022.3
+intel-noopt/dpl/2022.8
+intel-noopt/ifort/latest
+intel-noopt/ifort/2024.0.0
+intel-noopt/inspector/latest
+intel-noopt/inspector/2024.0
+intel-noopt/intel_ipp_intel64/latest
+intel-noopt/intel_ipp_intel64/2021.10
+intel-noopt/intel_ipp_intel64/2022.1
+intel-noopt/intel_ippcp_intel64/latest
+intel-noopt/intel_ippcp_intel64/2021.9
+intel-noopt/intel_ippcp_intel64/2025.1
+intel-noopt/ishmem/latest
+intel-noopt/ishmem/1.3.0
+intel-noopt/itac/latest
+intel-noopt/itac/2022.0
+intel-noopt/mkl/latest
+intel-noopt/mkl/2024.0
+intel-noopt/mkl/2025.1
+intel-noopt/oclfpga/latest
+intel-noopt/oclfpga/2023.2.1
+intel-noopt/oclfpga/2024.0.0
+intel-noopt/tbb/latest
+intel-noopt/tbb/2021.11
+intel-noopt/tbb/2022.1
+intel-noopt/umf/latest
+intel-noopt/umf/0.10.0
+intel-noopt/vtune/latest
+intel-noopt/vtune/2024.0
+intel-noopt/vtune/2025.3
+lammps/
+lammps/generic/2023.08.02u1
+lammps/gnu15-impi2021.14/2025.07.22u2
+lammps/gnu15-mpich3.4.3/2025.07.22u2
+lammps/gnu15-openmpi5.0.8/2025.07.22u2
+libaec/
+libaec/1.1.4
+mamba/
+mamba/23.1.0
+matlab/
+matlab/container
+matlab/r2021a
+matlab/r2021b
+matlab/r2023a
+nvidia/cuda/
+nvidia/cuda/10.2.2
+nvidia/cuda/11.0.3
+nvidia/cuda/11.3.1
+nvidia/cuda/11.6.0
+nvidia/cuda/11.8.0
+nvidia/cuda/12.0.0
+nvidia/cuda/12.1.0
+nvidia/cuda/12.2.0
+nvidia/cuda/12.5.0
+nvidia/cuda/12.9.1
+nvidia/cuda/13.0.0
+nvidia/licensing/
+nvidia/licensing/hpc-sdk
+nvidia/licensing/sdk-samples-and-tools
+nvidia/nvhpc-byo-compiler/
+nvidia/nvhpc-byo-compiler/21.5
+nvidia/nvhpc-byo-compiler/22.3
+nvidia/nvhpc-byo-compiler/22.9
+nvidia/nvhpc-byo-compiler/23.7
+nvidia/nvhpc-byo-compiler/23.11
+nvidia/nvhpc-byo-compiler/24.5
+nvidia/nvhpc-hpcx-cuda11/
+nvidia/nvhpc-hpcx-cuda11/24.5
+nvidia/nvhpc-hpcx-cuda12/
+nvidia/nvhpc-hpcx-cuda12/23.11
+nvidia/nvhpc-hpcx-cuda12/24.5
+nvidia/nvhpc-hpcx/
+nvidia/nvhpc-hpcx/23.11
+nvidia/nvhpc-hpcx/24.5
+nvidia/nvhpc-nompi/
+nvidia/nvhpc-nompi/21.5
+nvidia/nvhpc-nompi/22.3
+nvidia/nvhpc-nompi/22.9
+nvidia/nvhpc-nompi/23.7
+nvidia/nvhpc-nompi/23.11
+nvidia/nvhpc-nompi/24.5
+nvidia/nvhpc-openmpi3/
+nvidia/nvhpc-openmpi3/23.11
+nvidia/nvhpc-openmpi3/24.5
+nvidia/nvhpc/
+nvidia/nvhpc/21.5
+nvidia/nvhpc/22.3
+nvidia/nvhpc/22.9
+nvidia/nvhpc/23.7
+nvidia/nvhpc/23.11
+nvidia/nvhpc/24.5
+starccm+/
+starccm+/17.04.008-R8
+starccm+/18.02.010-R8
+starccm+/18.04.009-R8
+starccm+/18.06.006-R8
+starccm+/19.04.007-R8
+szip/libaec/
+szip/libaec/1.1.4
+
+===== CUDA MODULE VERSIONS + NVCC =====
+CUDA-related modules found:
+nvidia/cuda/10.2.2
+nvidia/cuda/11.0.3
+nvidia/cuda/11.3.1
+nvidia/cuda/11.6.0
+nvidia/cuda/11.8.0
+nvidia/cuda/12.0.0
+nvidia/cuda/12.1.0
+nvidia/cuda/12.2.0
+nvidia/cuda/12.5.0
+nvidia/cuda/12.9.1
+nvidia/cuda/13.0.0
+nvidia/nvhpc-hpcx-cuda11/24.5
+nvidia/nvhpc-hpcx-cuda12/23.11
+nvidia/nvhpc-hpcx-cuda12/24.5
+--- default 'module load nvidia/cuda' (as in the course HW01 example) ---
+
+Currently Loaded Modules:
+  1) nvidia/cuda/13.0.0
+
+
+
+/opt/apps/cuda/x86_64/13.0.0/default/bin/nvcc
+Built on Wed_Jul_16_07:30:01_PM_PDT_2025
+Cuda compilation tools, release 13.0, V13.0.48
+Build cuda_13.0.r13.0/compiler.36260728_0
+--- nvidia/cuda/10.2.2 ---
+/opt/apps/cuda/x86_64/10.2.2/default/bin/nvcc
+Copyright (c) 2005-2019 NVIDIA Corporation
+Built on Wed_Oct_23_19:24:38_PDT_2019
+Cuda compilation tools, release 10.2, V10.2.89
+--- nvidia/cuda/11.0.3 ---
+/opt/apps/cuda/x86_64/11.0.3/default/bin/nvcc
+Built on Wed_Jul_22_19:09:09_PDT_2020
+Cuda compilation tools, release 11.0, V11.0.221
+Build cuda_11.0_bu.TC445_37.28845127_0
+--- nvidia/cuda/11.3.1 ---
+/opt/apps/cuda/x86_64/11.3.1/default/bin/nvcc
+Built on Mon_May__3_19:15:13_PDT_2021
+Cuda compilation tools, release 11.3, V11.3.109
+Build cuda_11.3.r11.3/compiler.29920130_0
+--- nvidia/cuda/11.6.0 ---
+/opt/apps/cuda/x86_64/11.6.0/default/bin/nvcc
+Built on Fri_Dec_17_18:16:03_PST_2021
+Cuda compilation tools, release 11.6, V11.6.55
+Build cuda_11.6.r11.6/compiler.30794723_0
+--- nvidia/cuda/11.8.0 ---
+/opt/apps/cuda/x86_64/11.8.0/default/bin/nvcc
+Built on Wed_Sep_21_10:33:58_PDT_2022
+Cuda compilation tools, release 11.8, V11.8.89
+Build cuda_11.8.r11.8/compiler.31833905_0
+--- nvidia/cuda/12.0.0 ---
+/opt/apps/cuda/x86_64/12.0.0/default/bin/nvcc
+Built on Mon_Oct_24_19:12:58_PDT_2022
+Cuda compilation tools, release 12.0, V12.0.76
+Build cuda_12.0.r12.0/compiler.31968024_0
+--- nvidia/cuda/12.1.0 ---
+/opt/apps/cuda/x86_64/12.1.0/default/bin/nvcc
+Built on Tue_Feb__7_19:32:13_PST_2023
+Cuda compilation tools, release 12.1, V12.1.66
+Build cuda_12.1.r12.1/compiler.32415258_0
+--- nvidia/cuda/12.2.0 ---
+/opt/apps/cuda/x86_64/12.2.0/default/bin/nvcc
+Built on Tue_Jun_13_19:16:58_PDT_2023
+Cuda compilation tools, release 12.2, V12.2.91
+Build cuda_12.2.r12.2/compiler.32965470_0
+--- nvidia/cuda/12.5.0 ---
+/opt/apps/cuda/x86_64/12.5.0/default/bin/nvcc
+Built on Wed_Apr_17_19:19:55_PDT_2024
+Cuda compilation tools, release 12.5, V12.5.40
+Build cuda_12.5.r12.5/compiler.34177558_0
+--- nvidia/cuda/12.9.1 ---
+/opt/apps/cuda/x86_64/12.9.1/default/bin/nvcc
+Built on Tue_May_27_02:21:03_PDT_2025
+Cuda compilation tools, release 12.9, V12.9.86
+Build cuda_12.9.r12.9/compiler.36037853_0
+--- nvidia/cuda/13.0.0 ---
+/opt/apps/cuda/x86_64/13.0.0/default/bin/nvcc
+Built on Wed_Jul_16_07:30:01_PM_PDT_2025
+Cuda compilation tools, release 13.0, V13.0.48
+Build cuda_13.0.r13.0/compiler.36260728_0
+--- nvidia/nvhpc-hpcx-cuda11/24.5 ---
+/opt/apps/nvhpc/24.5/Linux_x86_64/24.5/compilers/bin/nvcc
+Built on Thu_Mar_28_02:18:24_PDT_2024
+Cuda compilation tools, release 12.4, V12.4.131
+Build cuda_12.4.r12.4/compiler.34097967_0
+--- nvidia/nvhpc-hpcx-cuda12/23.11 ---
+/opt/apps/nvhpc/23.11/Linux_x86_64/23.11/compilers/bin/nvcc
+Built on Fri_Sep__8_19:17:24_PDT_2023
+Cuda compilation tools, release 12.3, V12.3.52
+Build cuda_12.3.r12.3/compiler.33281558_0
+--- nvidia/nvhpc-hpcx-cuda12/24.5 ---
+/opt/apps/nvhpc/24.5/Linux_x86_64/24.5/compilers/bin/nvcc
+Built on Thu_Mar_28_02:18:24_PDT_2024
+Cuda compilation tools, release 12.4, V12.4.131
+Build cuda_12.4.r12.4/compiler.34097967_0
+newest CUDA module: nvidia/nvhpc-hpcx-cuda12/24.5
+
+===== GCC =====
+$ gcc --version | head -1
+gcc (GCC) 14.3.1 20251022 (Red Hat 14.3.1-4)
+gcc modules: gcc/12.2.0 gcc/13.2.0 gcc/14.3.0
+Lmod Warning: This module was built for an older platform and may not work
+correctly!
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    gcc/13.2.0       /opt/apps/lmod/modulefiles/gcc/13.2.0.lua
+
+Lmod Warning: Please use a newer version of this module for compatibility with
+Euler Generation 8.
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    gcc/13.2.0       /opt/apps/lmod/modulefiles/gcc/13.2.0.lua
+
+loaded gcc/13.2.0 (the version named in the course example)
+$ gcc --version | head -1; g++ --version | head -1
+gcc (GCC) 13.2.0
+g++ (GCC) 13.2.0
+
+===== PYTHON / TOOLS =====
+$ for t in python3 python pip3 pip uv conda mamba cmake ninja make git curl wget; do printf "%-8s " $t; (command -v $t || echo "-"); done
+python3  /usr/bin/python3
+python   /usr/bin/python
+pip3     /usr/bin/pip3
+pip      /usr/bin/pip
+uv       -
+conda    -
+mamba    -
+cmake    /usr/bin/cmake
+ninja    /usr/bin/ninja
+make     /usr/bin/make
+git      /usr/bin/git
+curl     /usr/bin/curl
+wget     /usr/local/bin/wget
+$ python3 --version; pip3 --version; uv --version; conda --version; cmake --version | head -1; ninja --version; git --version
+Python 3.12.15
+pip 23.3.2 from /usr/lib/python3.12/site-packages/pip (python 3.12)
+bash: line 1: uv: command not found
+bash: line 1: conda: command not found
+cmake version 3.31.8
+1.11.1
+git version 2.52.0
+$ python3 -c "import sys;print(sys.version)"; python3 -c "import torch;print(\"torch\",torch.__version__,torch.version.cuda,torch.cuda.is_available())"
+3.12.15 (main, Oct  1 2026, 00:00:00) [GCC 14.3.1 20251022 (Red Hat 14.3.1-4)]
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'torch'
+FAILED (rc=1): python3 -c "import sys;print(sys.version)"; python3 -c "import torch;print(\"torch\",torch.__version__,torch.version.cuda,torch.cuda.is_available())"
+$ python3 -m venv --help >/dev/null && d=${TMPDIR:-/tmp}/probe_venv_$$ && python3 -m venv $d && echo "venv creation OK ($d)" ; rm -rf ${TMPDIR:-/tmp}/probe_venv_$$
+venv creation OK (/tmp/probe_venv_3662904)
+
+===== OUTBOUND INTERNET FROM COMPUTE NODE =====
+https://huggingface.co                                                           200
+https://pypi.org                                                                 200
+https://files.pythonhosted.org                                                   404
+https://download.pytorch.org                                                     403
+https://github.com                                                               200
+https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/resolve/main/config.json       200
+[Proxy environment omitted.]
+
+
+===== LOCAL SCRATCH / TMPDIR =====
+$ echo "TMPDIR=$TMPDIR  SLURM_TMPDIR=${SLURM_TMPDIR:-}  SCRATCH=${SCRATCH:-}"
+TMPDIR=/tmp  SLURM_TMPDIR=  SCRATCH=
+$ df -h /tmp ${TMPDIR:-/tmp} $HOME /dev/shm 2>&1
+Filesystem                                                                                                     Size  Used Avail Use% Mounted on
+/dev/sda3                                                                                                      435G   24G  390G   6% /
+/dev/sda3                                                                                                      435G   24G  390G   6% /
+guest@3cc34807-c961-4d19-8a89-a85301a103a0.cephfs=/volumes/_nogroup/home/29175399-d151-4b82-9e41-664934ed13f8  982T  634T  349T  65% /srv/home
+tmpfs                                                                                                          126G   13M  126G   1% /dev/shm
+[Directory listing with other users' names omitted.]
+
+$ mount | grep -E " (/home|/scratch|/srv|/tmp) " | head
+/dev/nvme0n1p1 on /scratch type ext4 (rw,noatime,seclabel,stripe=32)
+
+===== CUDA COMPILE + RUN SANITY TEST =====
+--- loading nvidia/nvhpc-hpcx-cuda12/24.5 ---
+Cuda compilation tools, release 12.4, V12.4.131
+Build cuda_12.4.r12.4/compiler.34097967_0
+$ nvcc -arch=native /tmp/probe_cuda.8LVRxe/t.cu -o /tmp/probe_cuda.8LVRxe/t
+compile OK with -arch=native (nvidia/nvhpc-hpcx-cuda12/24.5)
+$ /tmp/probe_cuda.8LVRxe/t
+devices: 1  driver CUDA: 13000  runtime CUDA: 12040
+name: NVIDIA RTX 4000 SFF Ada Generation
+compute capability: 8.9
+SMs: 48
+global mem: 19.5 GiB
+mem bus width: 160 bit
+mem clock: 7001 MHz
+SM clock: 1560 MHz
+peak mem BW (2*clk*bus/8): 280 GB/s
+L2: 40960 KiB  smem/block optin: 99 KiB  regs/SM: 65536
+kernel launch OK
+RUN OK
+CUDA SANITY TEST: SUCCESS
+
+===== DONE =====
+Finished: Tue Nov 17 09:11:21 PM CST 2026
+View this log with:  cat /srv/home/[username]/probe/probe_122802.out
