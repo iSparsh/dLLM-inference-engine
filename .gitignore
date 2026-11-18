@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Build outputs
+build/
+*.o
+*.so
+*.ptx
+*.cubin
+
+# Models, datasets and large artifacts (download them; never commit)
+*.gguf
+*.safetensors
+*.bin
+*.parquet
+data/
+hf_cache/
+models/
+
+# Slurm / profiler outputs
+*.out
+*.err
+*.nsys-rep
+*.ncu-rep
+*.sqlite
+
+# Course files kept local only. The repo is public: the feedback PDF holds other
+# teams' names and TA comments, the proposal holds our emails, and the slides and
+# template are course material. Everyone already has these from Canvas.
+docs/*.pdf
+docs/*.pptx
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
