@@ -193,7 +193,7 @@ The hit rates for P2 and P3 come from the trace dump (E3). **They are a report f
 
 Euler facts, from `scripts/euler/probe_euler.sh` (job 122802):
 - `-p instruction --gres=gpu:1`, **max 45 min per job** (the course notes say 60; the partition enforces 45).
-- Modules `nvidia/cuda/13.0.0` and `gcc/14.3.0`. Driver 580 (CUDA 13.0).
+- Module `nvidia/cuda/13.0.0`, system GCC 14.3.1. Driver 580 (CUDA 13.0).
 - System Python 3.12, no torch preinstalled. **Compute nodes have internet** (HF and pypi reachable).
 - Home is CephFS; node-local NVMe at `/scratch`.
 - Compiling on the login node is OK. **Running** anything there is not.
