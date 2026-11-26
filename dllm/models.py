@@ -21,7 +21,7 @@ def load(
     path = snapshot_download(
         MODEL_IDS[model],
         local_files_only=local_only,
-        allow_patterns=["*.json", "*.py", "*.txt", "*.model", "*.safetensors"],
+        allow_patterns=["*.json", "*.jinja", "*.py", "*.txt", "*.model", "*.safetensors"],
     )
     kwargs = {"trust_remote_code": model == "dllm", "local_files_only": True}
     network = AutoModelForCausalLM.from_pretrained(
