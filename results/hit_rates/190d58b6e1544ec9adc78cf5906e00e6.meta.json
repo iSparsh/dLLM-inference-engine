@@ -1,0 +1,24 @@
+{
+  "traces": "traces/n30.jsonl",
+  "doubled_pass_extra_cost": 0.022,
+  "gpu": null,
+  "driver": null,
+  "clocks": {
+    "sm_mhz": null,
+    "mem_mhz": null,
+    "power_limit_w": null
+  },
+  "git_sha": "4ebaf9de4ed12a1c5f97e940752a6a97eade27ed",
+  "host": "Ayshas-MacBook-Pro.local",
+  "torch": "2.14.1",
+  "ops": {
+    "add_rmsnorm": "torch",
+    "rope_kv_write": "torch",
+    "block_attention": "torch",
+    "silu_mul": "torch",
+    "select_commit": "torch",
+    "example_axpy": "torch"
+  },
+  "run_id": "190d58b6e1544ec9adc78cf5906e00e6",
+  "slurm_job_id": null
+}
