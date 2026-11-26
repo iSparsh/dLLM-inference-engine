@@ -1,0 +1,1 @@
+{"op": "add_rmsnorm", "implementation": "torch+graph", "L": 128, "backend": "torch", "M": 32, "q_start": 96, "capacity": 4096, "block_size": 32, "ms": 0.020479999482631683, "bytes": 396288, "GB_per_s": 19.35000048882213, "run_id": "6411d768b94b4fb8a74d5d1bab402a27"}

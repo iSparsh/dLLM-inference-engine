@@ -1,0 +1,1 @@
+{"op": "silu_mul", "implementation": "ours+graph", "L": 128, "backend": "ours", "M": 32, "q_start": 96, "capacity": 4096, "block_size": 32, "ms": 0.0071680000983178616, "bytes": 1720320, "GB_per_s": 239.99999670810735, "run_id": "c9860b6ab6414dd7b641cc93feca926d"}
