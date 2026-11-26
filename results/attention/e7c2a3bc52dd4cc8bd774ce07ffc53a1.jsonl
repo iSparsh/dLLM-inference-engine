@@ -1,0 +1,1 @@
+{"op": "block_attention", "implementation": "sdpa_nomask+graph", "L": 4096, "backend": "torch", "M": 32, "q_start": 4064, "capacity": 4096, "block_size": 32, "ms": 0.10382399708032608, "bytes": 25362432, "GB_per_s": 244.28294723018328, "run_id": "e7c2a3bc52dd4cc8bd774ce07ffc53a1"}

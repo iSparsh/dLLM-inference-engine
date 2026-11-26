@@ -1,0 +1,1 @@
+{"op": "block_attention", "implementation": "hf_cat+graph", "L": 512, "backend": "torch", "M": 32, "q_start": 480, "capacity": 4096, "block_size": 32, "ms": 0.08499199897050858, "bytes": 720900, "GB_per_s": 8.481974876836883, "run_id": "13cd34d3062648aaa890ef59ec0d7549"}

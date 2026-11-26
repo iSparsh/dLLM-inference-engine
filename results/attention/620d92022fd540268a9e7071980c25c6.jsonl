@@ -1,0 +1,1 @@
+{"op": "block_attention", "implementation": "ours+graph", "L": 4096, "backend": "ours", "M": 64, "q_start": 4032, "capacity": 4096, "block_size": 32, "ms": 5.510560035705566, "bytes": 4587524, "GB_per_s": 0.8324968733259828, "run_id": "620d92022fd540268a9e7071980c25c6"}
