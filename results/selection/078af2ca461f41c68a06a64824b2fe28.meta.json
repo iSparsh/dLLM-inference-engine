@@ -1,0 +1,28 @@
+{
+  "engine": "reference",
+  "model": "dllm",
+  "tau": 0.9,
+  "block_size": 32,
+  "sub_block": 8,
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "driver": "620.73.04",
+  "clocks": {
+    "sm_mhz": 2520,
+    "mem_mhz": 8001,
+    "power_limit_w": null,
+    "default_power_limit_w": 80.0
+  },
+  "git_sha": "f1caa06fcdba25d29cee7d6f1b5af5933d6cef18",
+  "host": "victus-cachyos",
+  "torch": "2.14.1+cu130",
+  "ops": {
+    "add_rmsnorm": "torch",
+    "rope_kv_write": "torch",
+    "block_attention": "torch",
+    "silu_mul": "torch",
+    "select_commit": "torch",
+    "example_axpy": "torch"
+  },
+  "run_id": "078af2ca461f41c68a06a64824b2fe28",
+  "slurm_job_id": null
+}

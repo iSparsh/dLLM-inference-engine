@@ -1,0 +1,1 @@
+{"op": "select_commit", "implementation": "ours+graph", "L": 128, "backend": "ours", "M": 32, "q_start": 96, "capacity": 4096, "block_size": 32, "ms": 0.08395199850201607, "bytes": 2431260, "GB_per_s": 28.960120585355863, "run_id": "90dba462af274a0d94e79230c66e744c"}
