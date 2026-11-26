@@ -44,9 +44,26 @@ class SinglePass:
         self.start.fill_(length)
 
     @torch.inference_mode()
-    def forward(self, ids: Tensor) -> Tensor:
-        """Return [M,V] logits. Ensure start+M <= capacity before calling."""
+    def forward(
+        self,
+        ids: Tensor,
+        length: int | None = None,
+        last_only: bool = False,
+        packed: bool = True,
+    ) -> Tensor:
+        """Return [M,V] logits, or [1,V] with last_only. Ensure start+M <= length.
+
+        length limits attention to the first cache slots (default: all of them), so a
+        caller can bucket the stock attention op's cost by context length. Keys past
+        start+M are masked either way, so the bucket does not change the result.
+
+        packed=False runs HF's separate gate and up GEMMs. cuBLAS can choose a different
+        algorithm for the packed [M,1536]x[1536,17920] shape than for two N=8960 GEMMs,
+        which changes bf16 rounding: on the RTX 4060 the results are bitwise equal for
+        M <= 32 but not for M = 64 or 96, so prefill uses the unpacked form for parity.
+        """
         base = self.model.model
+        k_cache, v_cache = self.k[:, :, :length], self.v[:, :, :length]
         residual = base.embed_tokens(ids)
         x = None
         for i, layer in enumerate(base.layers):
@@ -65,16 +82,16 @@ class SinglePass:
                 q=q,
                 k=k,
                 v=v,
-                k_cache=self.k[i],
-                v_cache=self.v[i],
+                k_cache=k_cache[i],
+                v_cache=v_cache[i],
                 q_start=self.start,
                 cos=self.cos,
                 sin=self.sin,
             )
             att = ops.block_attention(
                 q=q,
-                k_cache=self.k[i],
-                v_cache=self.v[i],
+                k_cache=k_cache[i],
+                v_cache=v_cache[i],
                 q_start=self.start,
                 block_size=self.block_size,
             )
@@ -84,12 +101,16 @@ class SinglePass:
                 weight=layer.post_attention_layernorm.weight,
                 eps=self.model.config.rms_norm_eps,
             )
-            hidden = ops.silu_mul(gate_up=F.linear(norm, self.gate_up[i]))
+            if packed:
+                gate_up = F.linear(norm, self.gate_up[i])
+            else:
+                gate_up = torch.cat((layer.mlp.gate_proj(norm), layer.mlp.up_proj(norm)), -1)
+            hidden = ops.silu_mul(gate_up=gate_up)
             x = layer.mlp.down_proj(hidden)
         norm = ops.add_rmsnorm(
             x, residual, base.norm.weight, self.model.config.rms_norm_eps
         )
-        return self.model.lm_head(norm)
+        return self.model.lm_head(norm[-1:] if last_only else norm)
 
     @torch.inference_mode()
     def capture(self, ids: Tensor) -> Callable[[Tensor], Tensor]:
