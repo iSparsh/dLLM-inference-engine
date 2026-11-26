@@ -1,0 +1,10 @@
+{"prompt_id": "gsm8k-0005", "prompt_tokens": 90, "gen_tokens": 171, "passes": 100, "ms_total": 1788.57, "ms_per_pass": 17.886, "tok_per_s": 95.61, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
+{"prompt_id": "gsm8k-0017", "prompt_tokens": 92, "gen_tokens": 267, "passes": 111, "ms_total": 2001.1, "ms_per_pass": 18.028, "tok_per_s": 133.43, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
+{"prompt_id": "gsm8k-0021", "prompt_tokens": 80, "gen_tokens": 163, "passes": 93, "ms_total": 1651.92, "ms_per_pass": 17.763, "tok_per_s": 98.67, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
+{"prompt_id": "gsm8k-0052", "prompt_tokens": 96, "gen_tokens": 200, "passes": 112, "ms_total": 2003.23, "ms_per_pass": 17.886, "tok_per_s": 99.84, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
+{"prompt_id": "gsm8k-0054", "prompt_tokens": 116, "gen_tokens": 160, "passes": 89, "ms_total": 1587.99, "ms_per_pass": 17.843, "tok_per_s": 100.76, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
+{"prompt_id": "gsm8k-0055", "prompt_tokens": 84, "gen_tokens": 142, "passes": 73, "ms_total": 1293.06, "ms_per_pass": 17.713, "tok_per_s": 109.82, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
+{"prompt_id": "gsm8k-0079", "prompt_tokens": 82, "gen_tokens": 140, "passes": 76, "ms_total": 1344.07, "ms_per_pass": 17.685, "tok_per_s": 104.16, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
+{"prompt_id": "gsm8k-0092", "prompt_tokens": 85, "gen_tokens": 132, "passes": 51, "ms_total": 901.85, "ms_per_pass": 17.683, "tok_per_s": 146.37, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
+{"prompt_id": "gsm8k-0102", "prompt_tokens": 99, "gen_tokens": 265, "passes": 136, "ms_total": 2433.21, "ms_per_pass": 17.891, "tok_per_s": 108.91, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
+{"prompt_id": "gsm8k-0120", "prompt_tokens": 75, "gen_tokens": 245, "passes": 77, "ms_total": 1368.39, "ms_per_pass": 17.771, "tok_per_s": 179.04, "run_id": "4d479ca4bfc14dfa94dc413503383d99"}
