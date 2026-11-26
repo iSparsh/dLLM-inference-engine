@@ -1,0 +1,1 @@
+{"op": "add_rmsnorm", "implementation": "ours+graph", "L": 160, "backend": "ours", "M": 64, "q_start": 96, "capacity": 4096, "block_size": 32, "ms": 0.018432000651955605, "bytes": 789504, "GB_per_s": 42.83333181828175, "run_id": "f188e36b177f4cafa49285d5db0a872b"}

@@ -1,0 +1,1 @@
+{"op": "silu_mul", "implementation": "torch+graph", "L": 128, "backend": "torch", "M": 32, "q_start": 96, "capacity": 4096, "block_size": 32, "ms": 0.008191999979317188, "bytes": 1720320, "GB_per_s": 210.00000053019903, "run_id": "800908794f01473996422e45c69a3a1e"}

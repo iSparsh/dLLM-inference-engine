@@ -1,0 +1,27 @@
+{
+  "engine": "reference",
+  "model": "ar",
+  "tau": 0.9,
+  "block_size": 1,
+  "sub_block": 8,
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "driver": "610.88",
+  "clocks": {
+    "sm_mhz": 1935,
+    "mem_mhz": 9501,
+    "power_limit_w": 350.0
+  },
+  "git_sha": "4ebaf9de4ed12a1c5f97e940752a6a97eade27ed",
+  "host": "Sakib-PC",
+  "torch": "2.14.1+cu130",
+  "ops": {
+    "add_rmsnorm": "torch",
+    "rope_kv_write": "torch",
+    "block_attention": "torch",
+    "silu_mul": "torch",
+    "select_commit": "torch",
+    "example_axpy": "torch"
+  },
+  "run_id": "d4bf1d8e91aa4d1a80c87359b60d2209",
+  "slurm_job_id": null
+}
