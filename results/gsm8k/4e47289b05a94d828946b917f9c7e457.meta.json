@@ -1,0 +1,26 @@
+{
+  "engine": "reference",
+  "model": "ar",
+  "max_new_tokens": 512,
+  "tau": null,
+  "gpu": "NVIDIA RTX 4000 Ada Generation",
+  "driver": "580.159.04",
+  "clocks": {
+    "sm_mhz": 2175,
+    "mem_mhz": 8551,
+    "power_limit_w": 130.0
+  },
+  "git_sha": "4ebaf9de4ed12a1c5f97e940752a6a97eade27ed",
+  "host": "euler03.engr.wisc.edu",
+  "torch": "2.14.1+cu130",
+  "ops": {
+    "add_rmsnorm": "torch",
+    "rope_kv_write": "torch",
+    "block_attention": "torch",
+    "silu_mul": "torch",
+    "select_commit": "torch",
+    "example_axpy": "torch"
+  },
+  "run_id": "4e47289b05a94d828946b917f9c7e457",
+  "slurm_job_id": "130655"
+}
