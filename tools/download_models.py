@@ -10,7 +10,7 @@ from huggingface_hub import snapshot_download
 
 from dllm.config import MODEL_IDS
 
-PATTERNS = ["*.json", "*.py", "*.txt", "*.model", "*.safetensors"]
+PATTERNS = ["*.json", "*.jinja", "*.py", "*.txt", "*.model", "*.safetensors"]
 
 
 def main() -> None:

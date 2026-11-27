@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 from transformers import PreTrainedModel
 
+from .commit_rules import CommitRule
 from .config import BLOCK, EOS, MASK, SUB_BLOCK
 from .ops.reference import select_commit
 from .trace import TraceHook, predictions
@@ -21,8 +22,12 @@ def decode(
     tau: float = 0.9,
     trace: TraceHook | None = None,
     observe: PassHook | None = None,
+    extra_commits: CommitRule | None = None,
 ) -> Tensor:
-    """Match Fast-dLLM generate, including its exactly-32 and budget edge cases."""
+    """Match Fast-dLLM generate, including its exactly-32 and budget edge cases.
+
+    extra_commits is experimental (P4): it commits more slots, so the output differs.
+    """
     if ids.ndim != 1 or not ids.numel():
         raise ValueError("Pass one nonempty prompt as a 1-D token tensor.")
     n = len(ids)
@@ -75,6 +80,8 @@ def decode(
                     observe(row, tokens, logits, cache)
                 before = tokens.clone() if trace else None
                 select_commit(logits, tokens, window, tau, MASK)
+                if extra_commits:
+                    extra_commits(row, logits, tokens)
                 if trace:
                     committed, guesses = predictions(logits, before, tokens, MASK)
                     trace({**row, "committed": committed, "guesses": guesses})

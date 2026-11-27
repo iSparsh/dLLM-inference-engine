@@ -199,7 +199,7 @@ Tokens are counted up to and including the first stop token, for both models. Ch
 ## 9. Euler
 
 - Partition `instruction`, 1 GPU (`--gres=gpu:1`), at most 45 minutes per job.
-- Modules: `gcc/14.3.0` and `nvidia/cuda/13.0.0` (loaded by `scripts/euler/job_template.sh`). Our virtual environment lives at `~/dllm-venv`, models at `~/hf_cache` (`HF_HOME`).
+- Module: `nvidia/cuda/13.0.0` (loaded by `scripts/euler/job_template.sh`). The compiler is the system GCC 14.3.1; the `gcc/14.3.0` module no longer builds against the OS headers. Our virtual environment lives at `~/dllm-venv`, models at `~/hf_cache` (`HF_HOME`).
 - Start every job from `scripts/euler/job_template.sh` and submit it from the repo root. Our CUDA ops build inside the job on first use; run nothing on the login node.
 
 ## 10. Git

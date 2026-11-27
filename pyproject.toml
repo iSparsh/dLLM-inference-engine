@@ -33,4 +33,5 @@ explicit = true
 torch = [{ index = "cu130", marker = "sys_platform == 'linux'" }]
 
 [tool.pytest.ini_options]
+pythonpath = ["."]
 markers = ["slow: requires locally cached model weights and an NVIDIA GPU"]
